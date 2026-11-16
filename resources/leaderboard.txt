@@ -1,0 +1,6 @@
+Forest;tt;0;0
+Forest;test;0;0
+Forest;lj jk;0;1
+Snow;ff;9;243
+Desert;gg;4;72
+Forest;ff;5;90
