@@ -7,7 +7,7 @@ Forest;ff;5;90
 Forest;่่้ส;0;0
 Forest;jdakgj k;1;0
 Forest;kdfj al;0;0
-Forest;minnie;1;0
+Forest;minnie;6;114
 Forest;minie;0;3
 Forest;ja skgjg;1;11
 Forest;ฟดกา่าว่ด;4;52
