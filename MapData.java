@@ -22,7 +22,7 @@ public class MapData {
         new MapData("Forest", false, 0, new int[][]{{-1,2},{5,2},{5,8},{11,8},{11,2},{17,2},{17,6},{21,6}}),
         new MapData("Desert", false, 1, new int[][]{{-1,8},{4,8},{4,1},{10,1},{10,7},{16,7},{16,4},{21,4}}),
         new MapData("Snow",   false, 2, new int[][]{{-1,5},{3,5},{3,1},{8,1},{8,9},{14,9},{14,5},{21,5}}),
-        new MapData("EGCO Common Room 6157", true, 3, new int[][]{{-1,1},{7,1},{7,9},{13,9},{13,3},{19,3},{19,5},{21,5}}),
+        //new MapData("EGCO Common Room 6157", true, 3, new int[][]{{-1,1},{7,1},{7,9},{13,9},{13,3},{19,3},{19,5},{21,5}}),
         new MapData("Lab 6273", true, 4, new int[][]{{-1,9},{2,9},{2,3},{9,3},{9,8},{15,8},{15,3},{21,3}})
     };
 

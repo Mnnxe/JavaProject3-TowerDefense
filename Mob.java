@@ -76,8 +76,13 @@ public class Mob {
     public void draw(Graphics2D g) {
         int r = type.getRadius();
         int cx = (int) x, cy = (int) y;
-
-        BufferedImage img = GameConstants.getImage(type.getImage(special));
+        
+        //add frame for walking
+        int frame = ((int)(distance / 10) % 3)+1; // 3 frame
+        String fileName = type.getImage(special).replace(".png", frame + ".png");
+        BufferedImage img = GameConstants.getImage(fileName);
+        if (img == null) img = GameConstants.getImage(type.getImage(special));
+        
         if (img != null) {
             int s = r * 10 + 8;
             g.drawImage(img, cx - s / 2, cy - s / 2, s, s, null);

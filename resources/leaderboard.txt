@@ -4,3 +4,8 @@ Forest;lj jk;0;1
 Snow;ff;9;243
 Desert;gg;4;72
 Forest;ff;5;90
+Forest;่่้ส;0;0
+Forest;jdakgj k;1;0
+Forest;kdfj al;0;0
+Forest;minnie;0;0
+Forest;minie;0;3
