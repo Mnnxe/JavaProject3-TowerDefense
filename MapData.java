@@ -1,6 +1,7 @@
 package JavaProject3_TowerDefense;
 import java.awt.*;
 import java.util.ArrayList;
+import java.awt.image.BufferedImage;
 
 // =====================================================================
 //  MapData : path, theme and drawing of each map
@@ -19,23 +20,25 @@ public class MapData {
 
     // every path: 22 grids horizontal + 16 grids vertical = same length (38 grids)
     public static final MapData[] MAPS = {
-        new MapData("Forest", false, 0, new int[][]{{-1,2},{5,2},{5,8},{11,8},{11,2},{17,2},{17,6},{21,6}}),
-        new MapData("Desert", false, 1, new int[][]{{-1,8},{4,8},{4,1},{10,1},{10,7},{16,7},{16,4},{21,4}}),
-        new MapData("Snow",   false, 2, new int[][]{{-1,5},{3,5},{3,1},{8,1},{8,9},{14,9},{14,5},{21,5}}),
-        //new MapData("EGCO Common Room 6157", true, 3, new int[][]{{-1,1},{7,1},{7,9},{13,9},{13,3},{19,3},{19,5},{21,5}}),
-        new MapData("Lab 6273", true, 4, new int[][]{{-1,9},{2,9},{2,3},{9,3},{9,8},{15,8},{15,3},{21,3}})
+        new MapData("Forest", false,"bg_forest.png", 0, new int[][]{{-1,2},{5,2},{5,8},{11,8},{11,2},{17,2},{17,6},{21,6}}),
+        new MapData("Desert", false, "bg_desert.png", 1, new int[][]{{-1,8},{4,8},{4,1},{10,1},{10,7},{16,7},{16,4},{21,4}}),
+        new MapData("Snow",   false, "bg_snow.png", 2, new int[][]{{-1,5},{3,5},{3,1},{8,1},{8,9},{14,9},{14,5},{21,5}}),
+        //new MapData("EGCO Common Room 6157", true, "bg_egco.png", 3, new int[][]{{-1,1},{7,1},{7,9},{13,9},{13,3},{19,3},{19,5},{21,5}}),
+        new MapData("Lab 6273", true, "bg_lab.png", 4, new int[][]{{-1,9},{2,9},{2,3},{9,3},{9,8},{15,8},{15,3},{21,3}})
     };
 
     private String name;
     private boolean special;
     private int theme;
+    private String backgroundImage;
     private int[][] waypoints;
     private boolean[][] pathCells = new boolean[COLS][ROWS];
 
-    public MapData(String name, boolean special, int theme, int[][] waypoints) {
+    public MapData(String name, boolean special, String backgroundImage, int theme, int[][] waypoints) {
         this.name = name;
         this.special = special;
         this.theme = theme;
+        this.backgroundImage = backgroundImage;
         this.waypoints = waypoints;
         for (int i = 0; i < waypoints.length - 1; i++) {
             int x = waypoints[i][0], y = waypoints[i][1];
@@ -71,35 +74,42 @@ public class MapData {
 
     // Draws whole map with any cell size (used by game and by preview)
     public void draw(Graphics2D g, int cs) {
-        Color[] c = THEME[theme];
-        for (int col = 0; col < COLS; col++) {
-            for (int row = 0; row < ROWS; row++) {
-                int x = col * cs, y = row * cs;
-                if (pathCells[col][row]) {
-                    g.setColor(c[2]);
-                    g.fillRect(x, y, cs, cs);
-                } else {
-                    g.setColor((col + row) % 2 == 0 ? c[0] : c[1]);
-                    g.fillRect(x, y, cs, cs);
-                    if ((col * 31 + row * 17 + theme * 5) % 9 == 0) drawDecoration(g, x, y, cs);
+        BufferedImage bg = GameConstants.getImage(backgroundImage);
+        if (bg != null) {
+            g.drawImage(bg, 0, 0, cs * COLS, cs * ROWS, null);
+        } else {
+            Color[] c = THEME[theme];
+            for (int col = 0; col < COLS; col++) {
+                for (int row = 0; row < ROWS; row++) {
+                    int x = col * cs, y = row * cs;
+                    if (pathCells[col][row]) {
+                        g.setColor(c[2]);
+                        g.fillRect(x, y, cs, cs);
+                    } else {
+                        g.setColor((col + row) % 2 == 0 ? c[0] : c[1]);
+                        g.fillRect(x, y, cs, cs);
+                        if ((col * 31 + row * 17 + theme * 5) % 9 == 0) drawDecoration(g, x, y, cs);
+                    }
                 }
             }
-        }
-        // path borders
-        Stroke old = g.getStroke();
-        g.setStroke(new BasicStroke(Math.max(1f, cs / 12f)));
-        g.setColor(c[3]);
-        for (int col = 0; col < COLS; col++) {
-            for (int row = 0; row < ROWS; row++) {
-                if (!pathCells[col][row]) continue;
-                int x = col * cs, y = row * cs;
-                if (!isPathOrOutside(col - 1, row)) g.drawLine(x, y, x, y + cs);
-                if (!isPathOrOutside(col + 1, row)) g.drawLine(x + cs, y, x + cs, y + cs);
-                if (!isPathOrOutside(col, row - 1)) g.drawLine(x, y, x + cs, y);
-                if (!isPathOrOutside(col, row + 1)) g.drawLine(x, y + cs, x + cs, y + cs);
+            // path borders
+            Stroke old = g.getStroke();
+            g.setStroke(new BasicStroke(Math.max(1f, cs / 12f)));
+            g.setColor(c[3]);
+            for (int col = 0; col < COLS; col++) {
+                for (int row = 0; row < ROWS; row++) {
+                    if (!pathCells[col][row]) continue;
+                    int x = col * cs, y = row * cs;
+                    if (!isPathOrOutside(col - 1, row)) g.drawLine(x, y, x, y + cs);
+                    if (!isPathOrOutside(col + 1, row)) g.drawLine(x + cs, y, x + cs, y + cs);
+                    if (!isPathOrOutside(col, row - 1)) g.drawLine(x, y, x + cs, y);
+                    if (!isPathOrOutside(col, row + 1)) g.drawLine(x, y + cs, x + cs, y + cs);
+                }
             }
+            g.setStroke(old);
         }
-        g.setStroke(old);
+
+        // draw portal and base
         drawPortal(g, 0, waypoints[0][1], cs);
         drawBase(g, waypoints[waypoints.length - 1][0], waypoints[waypoints.length - 1][1], cs);
     }
@@ -176,7 +186,7 @@ class WaveData {
 
     private static final MobType[][] TYPES = {
         {G}, {G, W}, {G, B}, {W, G, B, GO}, {G, GO, MB, B, G, W},
-        {B, GO, W, G}, {GO, W, B, G}, {B, GO, W, G}, {GO, G, B, W}, {B, MB, GO, W, BS, B, W, B, GO, G}
+        {B, GO, W, G}, {GO, W, B, G}, {B, GO, W, G}, {GO, G, B, W}, {B, MB, GO, W, BS, B, GO, G}
     };
     private static final int[][] COUNTS = {
         {6}, {6, 4}, {5, 12}, {5, 10, 7, 2}, {5, 4, 1, 11, 5, 8},

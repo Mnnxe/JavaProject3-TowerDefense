@@ -84,7 +84,7 @@ public class Mob {
         if (img == null) img = GameConstants.getImage(type.getImage(special));
         
         if (img != null) {
-            int s = r * 10 + 8;
+            int s = r * 4 + 8;
             g.drawImage(img, cx - s / 2, cy - s / 2, s, s, null);
         } else {
             drawShape(g, cx, cy, r);
