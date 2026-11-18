@@ -85,7 +85,7 @@ public class MainMenuFrame extends JFrame {
         setLocationRelativeTo(null);
     }
 
-    // background of the menu
+    // background of the menu --> insert picture
     class MenuPanel extends JPanel {
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);

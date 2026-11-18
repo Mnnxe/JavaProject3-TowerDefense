@@ -17,3 +17,7 @@ Forest;ฟ่าด่วห;1;0
 Forest;jaslkfj;0;0
 Forest;asfk;0;0
 Forest;kl'skgl;0;0
+Snow;ผาสวหกฟด;2;15
+Forest;jk lkj;0;0
+Forest;jkas;1;0
+Forest;djs fk;10;293
