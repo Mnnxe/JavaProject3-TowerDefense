@@ -1,3 +1,6 @@
+// Group members: 6xxxxxxx Firstname Lastname 1, 6xxxxxxx Firstname Lastname 2,
+//                6xxxxxxx Firstname Lastname 3, 6xxxxxxx Firstname Lastname 4,
+//                6xxxxxxx Firstname Lastname 5
 package JavaProject3_TowerDefense;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -76,15 +79,18 @@ public class Mob {
     public void draw(Graphics2D g) {
         int r = type.getRadius();
         int cx = (int) x, cy = (int) y;
-        
-        //add frame for walking
-        int frame = ((int)(distance / 10) % 3)+1; // 3 frame
-        String fileName = type.getImage(special).replace(".png", frame + ".png");
-        BufferedImage img = GameConstants.getImage(fileName);
-        if (img == null) img = GameConstants.getImage(type.getImage(special));
-        
+
+        // Basic mobs use 3 walking frames from resources/images/mobs/ (e.g. mobs/goblin_1.png)
+        // The frame changes with distance travelled, so the animation stops when the mob stops.
+        String imageName = type.getImage(special);
+        if (!special && !type.isBoss()) {
+            int frame = ((int) (distance / 8) % 3) + 1;
+            imageName = type.name().toLowerCase() + "_" + frame + ".png";
+        }
+
+        BufferedImage img = GameConstants.getImage(imageName);
         if (img != null) {
-            int s = r * 4 + 8;
+            int s = Math.max(32, r * 3);
             g.drawImage(img, cx - s / 2, cy - s / 2, s, s, null);
         } else {
             drawShape(g, cx, cy, r);
@@ -125,76 +131,78 @@ public class Mob {
             g.drawString(n, cx - fm.stringWidth(n) / 2, cy - r - 15);
         }
     }
-private void drawShape(Graphics2D g, int cx, int cy, int r) {
-    Color body = type.getColor();
-    switch (type) {
-        case GOBLIN:
-            g.setColor(body.darker());
-            g.fillPolygon(new int[]{cx - r + 2, cx - r - 7, cx - r / 3}, new int[]{cy - r / 3, cy - r - 2, cy - r + 3}, 3);
-            g.fillPolygon(new int[]{cx + r - 2, cx + r + 7, cx + r / 3}, new int[]{cy - r / 3, cy - r - 2, cy - r + 3}, 3);
-            g.setColor(body);
-            g.fillOval(cx - r, cy - r, 2 * r, 2 * r);
-            g.setColor(Color.BLACK);
-            g.drawOval(cx - r, cy - r, 2 * r, 2 * r);
-            eyes(g, cx, cy, r, Color.YELLOW);
-            break;
-        case WOLF:
-            g.setColor(body.darker());
-            g.fillPolygon(new int[]{cx - r + 1, cx - r / 2, cx - 2}, new int[]{cy - r / 2, cy - r - 7, cy - r / 2}, 3);
-            g.fillPolygon(new int[]{cx + 2, cx + r / 2, cx + r - 1}, new int[]{cy - r / 2, cy - r - 7, cy - r / 2}, 3);
-            g.setColor(body);
-            g.fillOval(cx - r - 3, cy - r + 3, 2 * r + 6, 2 * r - 4);
-            g.setColor(Color.BLACK);
-            g.drawOval(cx - r - 3, cy - r + 3, 2 * r + 6, 2 * r - 4);
-            eyes(g, cx, cy + 2, r, Color.RED);
-            break;
-        case BAT:
-            int flap = (int) (Math.sin(System.currentTimeMillis() / 70.0) * 5);
-            g.setColor(body.darker());
-            g.fillPolygon(new int[]{cx, cx - r - 9, cx - r - 3, cx - r / 2}, new int[]{cy, cy - 6 + flap, cy + 5, cy + 3}, 4);
-            g.fillPolygon(new int[]{cx, cx + r + 9, cx + r + 3, cx + r / 2}, new int[]{cy, cy - 6 + flap, cy + 5, cy + 3}, 4);
-            g.setColor(body);
-            g.fillOval(cx - r, cy - r, 2 * r, 2 * r);
-            g.setColor(Color.BLACK);
-            g.drawOval(cx - r, cy - r, 2 * r, 2 * r);
-            g.setColor(Color.RED);
-            g.fillOval(cx - 4, cy - 3, 3, 3);
-            g.fillOval(cx + 1, cy - 3, 3, 3);
-            break;
-        case GOLEM:
-            g.setColor(body);
-            g.fillRoundRect(cx - r, cy - r, 2 * r, 2 * r, 10, 10);
-            g.setColor(body.darker().darker());
-            g.drawRoundRect(cx - r, cy - r, 2 * r, 2 * r, 10, 10);
-            g.drawLine(cx - r / 2, cy + r / 3, cx, cy + r / 2);
-            g.drawLine(cx + r / 3, cy - r / 2, cx + r / 2, cy);
-            eyes(g, cx, cy, r, Color.ORANGE);
-            break;
-        case MINI_BOSS:
-            g.setColor(Color.WHITE);
-            g.fillPolygon(new int[]{cx - r + 3, cx - r - 5, cx - r / 3}, new int[]{cy - r / 2, cy - r - 10, cy - r + 2}, 3);
-            g.fillPolygon(new int[]{cx + r - 3, cx + r + 5, cx + r / 3}, new int[]{cy - r / 2, cy - r - 10, cy - r + 2}, 3);
-            g.setColor(body);
-            g.fillOval(cx - r, cy - r, 2 * r, 2 * r);
-            g.setColor(Color.BLACK);
-            g.drawOval(cx - r, cy - r, 2 * r, 2 * r);
-            eyes(g, cx, cy, r, Color.YELLOW);
-            g.drawLine(cx - r / 2 - 3, cy - r / 2 - 2, cx - 3, cy - r / 3);
-            g.drawLine(cx + r / 2 + 3, cy - r / 2 - 2, cx + 3, cy - r / 3);
-            break;
-        case BOSS:
-            g.setColor(body);
-            g.fillOval(cx - r, cy - r, 2 * r, 2 * r);
-            g.setColor(Color.BLACK);
-            g.drawOval(cx - r, cy - r, 2 * r, 2 * r);
-            g.setColor(GameConstants.GOLD);
-            g.fillPolygon(new int[]{cx - r / 2 - 4, cx - r / 2, cx - r / 4, cx, cx + r / 4, cx + r / 2, cx + r / 2 + 4},
-            new int[]{cy - r + 4, cy - r - 10, cy - r - 2, cy - r - 12, cy - r - 2, cy - r - 10, cy - r + 4}, 7);
-            eyes(g, cx, cy, r, Color.RED);
-            break;
+
+    // default drawing when the PNG is missing
+    private void drawShape(Graphics2D g, int cx, int cy, int r) {
+        Color body = type.getColor();
+        switch (type) {
+            case GOBLIN:
+                g.setColor(body.darker());
+                g.fillPolygon(new int[]{cx - r + 2, cx - r - 7, cx - r / 3}, new int[]{cy - r / 3, cy - r - 2, cy - r + 3}, 3);
+                g.fillPolygon(new int[]{cx + r - 2, cx + r + 7, cx + r / 3}, new int[]{cy - r / 3, cy - r - 2, cy - r + 3}, 3);
+                g.setColor(body);
+                g.fillOval(cx - r, cy - r, 2 * r, 2 * r);
+                g.setColor(Color.BLACK);
+                g.drawOval(cx - r, cy - r, 2 * r, 2 * r);
+                eyes(g, cx, cy, r, Color.YELLOW);
+                break;
+            case WOLF:
+                g.setColor(body.darker());
+                g.fillPolygon(new int[]{cx - r + 1, cx - r / 2, cx - 2}, new int[]{cy - r / 2, cy - r - 7, cy - r / 2}, 3);
+                g.fillPolygon(new int[]{cx + 2, cx + r / 2, cx + r - 1}, new int[]{cy - r / 2, cy - r - 7, cy - r / 2}, 3);
+                g.setColor(body);
+                g.fillOval(cx - r - 3, cy - r + 3, 2 * r + 6, 2 * r - 4);
+                g.setColor(Color.BLACK);
+                g.drawOval(cx - r - 3, cy - r + 3, 2 * r + 6, 2 * r - 4);
+                eyes(g, cx, cy + 2, r, Color.RED);
+                break;
+            case BAT:
+                int flap = (int) (Math.sin(System.currentTimeMillis() / 70.0) * 5);
+                g.setColor(body.darker());
+                g.fillPolygon(new int[]{cx, cx - r - 9, cx - r - 3, cx - r / 2}, new int[]{cy, cy - 6 + flap, cy + 5, cy + 3}, 4);
+                g.fillPolygon(new int[]{cx, cx + r + 9, cx + r + 3, cx + r / 2}, new int[]{cy, cy - 6 + flap, cy + 5, cy + 3}, 4);
+                g.setColor(body);
+                g.fillOval(cx - r, cy - r, 2 * r, 2 * r);
+                g.setColor(Color.BLACK);
+                g.drawOval(cx - r, cy - r, 2 * r, 2 * r);
+                g.setColor(Color.RED);
+                g.fillOval(cx - 4, cy - 3, 3, 3);
+                g.fillOval(cx + 1, cy - 3, 3, 3);
+                break;
+            case GOLEM:
+                g.setColor(body);
+                g.fillRoundRect(cx - r, cy - r, 2 * r, 2 * r, 10, 10);
+                g.setColor(body.darker().darker());
+                g.drawRoundRect(cx - r, cy - r, 2 * r, 2 * r, 10, 10);
+                g.drawLine(cx - r / 2, cy + r / 3, cx, cy + r / 2);
+                g.drawLine(cx + r / 3, cy - r / 2, cx + r / 2, cy);
+                eyes(g, cx, cy, r, Color.ORANGE);
+                break;
+            case MINI_BOSS:
+                g.setColor(Color.WHITE);
+                g.fillPolygon(new int[]{cx - r + 3, cx - r - 5, cx - r / 3}, new int[]{cy - r / 2, cy - r - 10, cy - r + 2}, 3);
+                g.fillPolygon(new int[]{cx + r - 3, cx + r + 5, cx + r / 3}, new int[]{cy - r / 2, cy - r - 10, cy - r + 2}, 3);
+                g.setColor(body);
+                g.fillOval(cx - r, cy - r, 2 * r, 2 * r);
+                g.setColor(Color.BLACK);
+                g.drawOval(cx - r, cy - r, 2 * r, 2 * r);
+                eyes(g, cx, cy, r, Color.YELLOW);
+                g.drawLine(cx - r / 2 - 3, cy - r / 2 - 2, cx - 3, cy - r / 3);
+                g.drawLine(cx + r / 2 + 3, cy - r / 2 - 2, cx + 3, cy - r / 3);
+                break;
+            case BOSS:
+                g.setColor(body);
+                g.fillOval(cx - r, cy - r, 2 * r, 2 * r);
+                g.setColor(Color.BLACK);
+                g.drawOval(cx - r, cy - r, 2 * r, 2 * r);
+                g.setColor(GameConstants.GOLD);
+                g.fillPolygon(new int[]{cx - r / 2 - 4, cx - r / 2, cx - r / 4, cx, cx + r / 4, cx + r / 2, cx + r / 2 + 4},
+                        new int[]{cy - r + 4, cy - r - 10, cy - r - 2, cy - r - 12, cy - r - 2, cy - r - 10, cy - r + 4}, 7);
+                eyes(g, cx, cy, r, Color.RED);
+                break;
         }
     }
-                            
+
     private void eyes(Graphics2D g, int cx, int cy, int r, Color c) {
         int e = Math.max(4, r / 3);
         g.setColor(c);
@@ -203,33 +211,33 @@ private void drawShape(Graphics2D g, int cx, int cy, int r) {
         g.setColor(Color.BLACK);
         g.fillOval(cx - r / 2, cy - r / 4 - 1, 2, 2);
         g.fillOval(cx + r / 2 - 2, cy - r / 4 - 1, 2, 2);
-    }                           
-}          
-                    
+    }
+}
+
 // =====================================================================
 //  MobType : stats of every mob (normal name / professor name)
+//  (no HP drop any more -> base HP can't be recovered)
 // =====================================================================
 enum MobType {
-    //         normal       special          hp   spawnCD speed dmg coin hpDrop rate  colour                   radius normalImg      specialImg
-    GOBLIN   ("Goblin",    "AJ.Ming",        60,  1.0, 1.0,   5,  10,  5, 0.10, new Color(90,170,70),   13, "goblin.png",   "ajming.png"),
-    WOLF     ("Wolf",      "Konlakorn",      50,  1.0, 2.0,   5,  12,  5, 0.10, new Color(150,150,160), 13, "wolf.png",     "konlakorn.png"),
-    BAT      ("Bat",       "AJ.Tanassanee",  40,  0.8, 1.4,   5,   5,  5, 0.05, new Color(120,70,150),   9, "bat.png",      "ajtanassanee.png"),
-    GOLEM    ("Golem",     "AJ.Tum",        220,  1.2, 0.6,  10,  25,  5, 0.15, new Color(130,110,90),  17, "golem.png",    "ajtum.png"),
-    MINI_BOSS("Mini Boss", "Vasin",        1000,  1.5, 0.5,  50, 100, 15, 1.00, new Color(200,50,50),   20, "mini_boss.png","ajvasin.png"),
-    BOSS     ("Boss",      "AJ.Kob",       2800,  1.5, 0.5, 100, 250, 15, 1.00, new Color(90,40,120),   24, "boss.png",     "ajkob.png");
+    //         normal       special          hp   spawnCD speed dmg coin  colour                   radius normalImg      specialImg
+    GOBLIN   ("Goblin",    "AJ.Ming",        60,  1.0, 1.0,   5,  10, new Color(90,170,70),   13, "goblin.png",   "ajming.png"),
+    WOLF     ("Wolf",      "Konlakorn",      50,  1.0, 2.0,   5,  12, new Color(150,150,160), 13, "wolf.png",     "konlakorn.png"),
+    BAT      ("Bat",       "AJ.Tanassanee",  40,  0.8, 1.4,   5,   5, new Color(120,70,150),   9, "bat.png",      "ajtanassanee.png"),
+    GOLEM    ("Golem",     "AJ.Tum",        220,  1.2, 0.6,  10,  25, new Color(130,110,90),  17, "golem.png",    "ajtum.png"),
+    MINI_BOSS("Mini Boss", "Vasin",        1000,  1.5, 0.5,  50, 100, new Color(200,50,50),   20, "mini_boss.png","ajvasin.png"),
+    BOSS     ("Boss",      "AJ.Kob",       2800,  1.5, 0.5, 100, 250, new Color(90,40,120),   24, "boss.png",     "ajkob.png");
 
     private String normalName, specialName, normalImage, specialImage;
-    private int maxHp, baseDamage, coinDrop, hpDrop, radius;
-    private double spawnCooldown, speed, hpDropRate;
+    private int maxHp, baseDamage, coinDrop, radius;
+    private double spawnCooldown, speed;
     private Color color;
 
     MobType(String normalName, String specialName, int maxHp, double spawnCooldown, double speed,
-            int baseDamage, int coinDrop, int hpDrop, double hpDropRate, Color color, int radius,
-            String normalImage, String specialImage) {
+            int baseDamage, int coinDrop, Color color, int radius, String normalImage, String specialImage) {
         this.normalName = normalName; this.specialName = specialName;
         this.maxHp = maxHp; this.spawnCooldown = spawnCooldown; this.speed = speed;
-        this.baseDamage = baseDamage; this.coinDrop = coinDrop; this.hpDrop = hpDrop;
-        this.hpDropRate = hpDropRate; this.color = color; this.radius = radius;
+        this.baseDamage = baseDamage; this.coinDrop = coinDrop;
+        this.color = color; this.radius = radius;
         this.normalImage = normalImage; this.specialImage = specialImage;
     }
 
@@ -240,8 +248,6 @@ enum MobType {
     public double getSpeed() { return speed; }
     public int getBaseDamage() { return baseDamage; }
     public int getCoinDrop() { return coinDrop; }
-    public int getHpDrop() { return hpDrop; }
-    public double getHpDropRate() { return hpDropRate; }
     public Color getColor() { return color; }
     public int getRadius() { return radius; }
     public boolean isBoss() { return this == MINI_BOSS || this == BOSS; }
