@@ -27,3 +27,28 @@ Forest;dsfksalf;0;0
 Forest;adsfafad;0;0
 Forest;kjd la;1;0
 Desert;JK LKJ LK;0;0
+Forest;rjkdfgj lk;0;0
+Forest;asdf;0;0
+Forest;ฟดสาฟกด;0;0
+Forest;่าดวฟสา่ด่;0;0
+Forest;klm,m;2;9
+Forest;gdfsg;2;8
+Forest;kljkl fd;4;59
+Forest;dfdsg;6;119
+Forest;gdsgg;1;6
+Forest;ggsdsg;2;16
+Forest;fsfdsaf;1;6
+Forest;หกดด;0;0
+Forest;า;0;0
+Forest;fsf;3;33
+Forest;fdsfs;4;57
+Forest;้เด้ด;2;16
+Forest;เ้เา้เ้่;2;22
+Forest;้่้า;4;57
+Forest;bhhghlj;3;32
+Forest;hgjgf;1;6
+Forest;fgfdg;2;16
+Forest;rgsg;2;10
+Forest;hhj;2;16
+Forest;sdgsdg;3;33
+Forest;ยนรี;1;12

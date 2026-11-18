@@ -30,7 +30,7 @@ public class MapDraw {
             drawGround(g, map, cs);
             drawPath(g, map, cs);
             drawPortal(g, 0, map.getStartRow(), cs);
-            drawBase(g, map.getBaseCol(), map.getBaseRow(), cs);
+            //drawBase(g, map.getBaseCol(), map.getBaseRow(), cs);
     }
 
     // light grid lines (shown while building)
@@ -60,7 +60,7 @@ public class MapDraw {
 
     // ================= path =================
     private static void drawPath(Graphics2D g, MapData map, int cs) {
-         int t = map.getTheme();
+        int t = map.getTheme();
         BufferedImage tile = GameConstants.getImage("path_" + THEME_KEYS[t] + ".png");
         Color[] c = THEME[t];
         for (int col = 0; col < COLS; col++) {
@@ -68,7 +68,7 @@ public class MapDraw {
                 if (!map.isPath(col, row)) continue;
                 int x = col * cs, y = row * cs;
                 if (tile != null) {
-                    g.drawImage(tile, x-1, y, cs, cs, null);
+                    g.drawImage(tile, x, y, cs, cs, null);
                 } else {
                     g.setColor(c[2]);
                     g.fillRect(x, y, cs, cs);
@@ -118,7 +118,7 @@ public class MapDraw {
         g.fillOval(x + cs * 3 / 8, y + cs * 3 / 8, cs / 4, cs / 4);
     }
 
-    private static void drawBase(Graphics2D g, int c, int r, int cs) {
+    /*private static void drawBase(Graphics2D g, int c, int r, int cs) {
         int x = c * cs, y = r * cs;
         BufferedImage img = GameConstants.getImage("base.png");
         if (img != null) {
@@ -138,5 +138,5 @@ public class MapDraw {
         g.fillPolygon(new int[]{x + cs / 2, x + cs / 2 + cs / 4, x + cs / 2}, new int[]{y, y + cs / 12, y + cs / 6}, 3);
         g.setColor(Color.BLACK);
         g.drawRect(x + cs / 8, y + cs / 3, cs * 3 / 4, cs * 3 / 5);
-    }
+    }*/
 }

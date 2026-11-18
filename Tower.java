@@ -66,27 +66,39 @@ public class Tower {
     // ================= drawing (archer.png / cannon.png / ice.png / fire.png) =================
     public void draw(Graphics2D g) {
         int x = col * CELL, y = row * CELL, cx = x + CELL / 2, cy = y + CELL / 2;
-        g.setColor(new Color(125, 125, 135));
-        g.fillRoundRect(x + 3, y + 3, CELL - 6, CELL - 6, 12, 12);
-        g.setColor(new Color(70, 70, 80));
-        g.drawRoundRect(x + 3, y + 3, CELL - 6, CELL - 6, 12, 12);
+       
+        BufferedImage tower = GameConstants.getImage(type.name().toLowerCase()+ level + ".png");
+        BufferedImage weapon = GameConstants.getImage(type.name().toLowerCase() + "_weapon.png");
+        if (tower != null && weapon != null) {
+            g.drawImage(tower, x + 4, y + 4, CELL - 8, CELL - 10, null);
+            if (weapon != null) {
+                AffineTransform old = g.getTransform();
+                g.translate(cx, cy);
+                int wSize = CELL;
+                if(type != TowerType.ICE && type != TowerType.FIRE){
+                    g.rotate(angle + Math.PI / 2);
+                    g.drawImage(weapon, -wSize / 2, -wSize / 2, wSize, wSize, null);
+                }
+                else    g.drawImage(weapon, -wSize / 2, (-wSize / 2)-10, wSize, wSize, null);
 
-        BufferedImage img = GameConstants.getImage(type.name().toLowerCase() + ".png");
-        if (img != null) g.drawImage(img, x + 4, y + 4, CELL - 8, CELL - 8, null);
+                g.setTransform(old);
+            }
+        } 
         else drawShape(g, cx, cy);
-
+        
         if (fireFlash > 0) {
             int fx = (int) (cx + Math.cos(angle) * 20), fy = (int) (cy + Math.sin(angle) * 20);
             g.setColor(new Color(255, 255, 150, 190));
             g.fillOval(fx - 5, fy - 5, 10, 10);
         }
-
+        /*
         for (int i = 0; i < level; i++) {            // level stars
-            g.setColor(GameConstants.GOLD);
-            g.fillOval(x + 6 + i * 9, y + CELL - 12, 7, 7);
-            g.setColor(Color.BLACK);
-            g.drawOval(x + 6 + i * 9, y + CELL - 12, 7, 7);
-        }
+        g.setColor(GameConstants.GOLD);
+        g.fillOval(x + 6 + i * 9, y + CELL - 12, 7, 7);
+        g.setColor(Color.BLACK);
+        g.drawOval(x + 6 + i * 9, y + CELL - 12, 7, 7);
+    }
+    */
     }
 
     // default drawing when the PNG is missing (turret rotates to the target)
