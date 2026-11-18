@@ -1,3 +1,6 @@
+// Group members: 6xxxxxxx Firstname Lastname 1, 6xxxxxxx Firstname Lastname 2,
+//                6xxxxxxx Firstname Lastname 3, 6xxxxxxx Firstname Lastname 4,
+//                6xxxxxxx Firstname Lastname 5
 package JavaProject3_TowerDefense;
 import java.awt.*;
 import java.awt.event.*;
@@ -7,12 +10,12 @@ import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
 
 // =====================================================================
-//  BaseDialog : parent of every pop-up (title bar + X button at top-right)
+//  BaseDialog : parent of every pop-up (title bar + X button + PNG background)
 // =====================================================================
 public class BaseDialog extends JDialog {
     protected JPanel body;
 
-    public BaseDialog(Window owner, String title, int w, int h) {
+    public BaseDialog(Window owner, String title, int w, int h, String bgImage) {
         super(owner, title, Dialog.ModalityType.APPLICATION_MODAL);
         setUndecorated(true);
         setSize(w, h);
@@ -21,10 +24,10 @@ public class BaseDialog extends JDialog {
         root.setBackground(GameConstants.DARK_BG);
         root.setBorder(BorderFactory.createLineBorder(GameConstants.GOLD, 3));
 
-        JPanel header = new JPanel(new BorderLayout());
-        header.setBackground(GameConstants.HEADER_BG);
+        JPanel header = new ImagePanel("dialog_header.png", GameConstants.HEADER_BG);
+        header.setLayout(new BorderLayout());
         JLabel titleLabel = GameConstants.makeLabel("  " + title, GameConstants.HEADER_FONT, GameConstants.GOLD);
-        JButton closeBtn = GameConstants.makeButton("X", GameConstants.RED, 14);
+        JButton closeBtn = GameConstants.makeImageButton("btn_close.png", "X", GameConstants.RED, 40, 34, 14);
         closeBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 SoundManager.playSFX("click");
@@ -34,8 +37,7 @@ public class BaseDialog extends JDialog {
         header.add(titleLabel, BorderLayout.WEST);
         header.add(closeBtn, BorderLayout.EAST);
 
-        body = new JPanel();
-        body.setBackground(GameConstants.DARK_BG);
+        body = new ImagePanel(bgImage, GameConstants.DARK_BG);
 
         root.add(header, BorderLayout.NORTH);
         root.add(body, BorderLayout.CENTER);
@@ -51,14 +53,14 @@ public class BaseDialog extends JDialog {
 // =====================================================================
 class ExitDialog extends BaseDialog {
     public ExitDialog(Window owner) {
-        super(owner, "Exit", 380, 200);
+        super(owner, "Exit", 380, 200, "exit_bg.png");
         body.setLayout(null);
 
         JLabel q = GameConstants.makeLabel("Quit this game?", GameConstants.HEADER_FONT, GameConstants.TEXT);
         q.setHorizontalAlignment(SwingConstants.CENTER);
         q.setBounds(0, 25, 374, 30);
 
-        JButton yes = GameConstants.makeButton("Yes", GameConstants.RED);
+        JButton yes = GameConstants.makeImageButton("btn_yes.png", "Yes", GameConstants.RED, 100, 40, 16);
         yes.setBounds(70, 85, 100, 40);
         yes.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -67,7 +69,7 @@ class ExitDialog extends BaseDialog {
             }
         });
 
-        JButton no = GameConstants.makeButton("No", GameConstants.BLUE);
+        JButton no = GameConstants.makeImageButton("btn_no.png", "No", GameConstants.BLUE, 100, 40, 16);
         no.setBounds(205, 85, 100, 40);
         no.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) { dispose(); }
@@ -81,13 +83,16 @@ class ExitDialog extends BaseDialog {
 
 // =====================================================================
 //  HowToPlayDialog : pages with Previous / Next
+//  Uses howto_1.png ... howto_5.png. If a picture is missing -> text page.
 // =====================================================================
 class HowToPlayDialog extends BaseDialog {
+    private static final int IMG_W = 576, IMG_H = 320;
     private static final String[] TITLES = {"Goal", "Building Towers", "Upgrade & Sell", "Controls", "Enemies"};
     private static final String[] PAGES = {
         "Mobs walk along the path from the purple portal to your castle.\n\n"
       + "- Every mob that reaches the castle takes away base HP.\n"
-      + "- Base HP starts at 100. If it hits 0 -> DEFEAT.\n"
+      + "- Base HP starts at 100 and can NOT be recovered.\n"
+      + "- If it hits 0 -> DEFEAT.\n"
       + "- Survive all 10 waves -> VICTORY!\n\n"
       + "Wave 5 has a Mini Boss and wave 10 has the Final Boss.",
 
@@ -114,27 +119,34 @@ class HowToPlayDialog extends BaseDialog {
       + "Speed box: play at x1 or x2 speed.",
 
         "Goblin  - normal          (60 HP)\n"
-      + "Wolf    - fast            (40 HP)\n"
-      + "Bat     - swarm           (25 HP)\n"
+      + "Wolf    - fast            (50 HP)\n"
+      + "Bat     - swarm           (40 HP)\n"
       + "Golem   - tank            (220 HP)\n"
       + "Mini Boss (wave 5)        (1,000 HP)\n"
       + "Boss      (wave 10)       (2,800 HP)\n\n"
-      + "Killed mobs drop coins and sometimes restore base HP.\n"
+      + "Killed mobs drop coins only - protect your castle HP!\n"
       + "Play any basic map to unlock the 2 special maps... the professors are waiting!"
     };
 
     private int page = 0;
-    private JLabel pageTitle, pageNumber;
+    private JLabel pageTitle, pageNumber, pageImage;
     private JTextArea textArea;
+    private JScrollPane textScroll;
+    private JPanel center;
     private JButton prevBtn, nextBtn;
 
     public HowToPlayDialog(Window owner) {
-        super(owner, "How to Play", 620, 460);
+        super(owner, "How to Play", 620, 460, "howto_bg.png");
         body.setLayout(new BorderLayout(10, 10));
         body.setBorder(BorderFactory.createEmptyBorder(10, 20, 15, 20));
 
         pageTitle = GameConstants.makeLabel("", GameConstants.HEADER_FONT, GameConstants.GOLD);
 
+        // picture page
+        pageImage = new JLabel();
+        pageImage.setHorizontalAlignment(SwingConstants.CENTER);
+
+        // text page (fallback)
         textArea = new JTextArea();
         textArea.setEditable(false);
         textArea.setLineWrap(true);
@@ -143,9 +155,13 @@ class HowToPlayDialog extends BaseDialog {
         textArea.setBackground(GameConstants.PANEL_BG);
         textArea.setForeground(GameConstants.TEXT);
         textArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        textScroll = new JScrollPane(textArea);
 
-        prevBtn = GameConstants.makeButton("< Previous", GameConstants.BLUE, 14);
-        nextBtn = GameConstants.makeButton("Next >", GameConstants.BLUE, 14);
+        center = new JPanel(new BorderLayout());
+        center.setOpaque(false);
+
+        prevBtn = GameConstants.makeImageButton("btn_prev.png", "< Previous", GameConstants.BLUE, 130, 38, 14);
+        nextBtn = GameConstants.makeImageButton("btn_next.png", "Next >", GameConstants.BLUE, 130, 38, 14);
         pageNumber = GameConstants.makeLabel("", GameConstants.BOLD_FONT, GameConstants.TEXT);
         pageNumber.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -163,7 +179,7 @@ class HowToPlayDialog extends BaseDialog {
         bottom.add(nextBtn, BorderLayout.EAST);
 
         body.add(pageTitle, BorderLayout.NORTH);
-        body.add(new JScrollPane(textArea), BorderLayout.CENTER);
+        body.add(center, BorderLayout.CENTER);
         body.add(bottom, BorderLayout.SOUTH);
         showPage();
     }
@@ -176,11 +192,54 @@ class HowToPlayDialog extends BaseDialog {
 
     private void showPage() {
         pageTitle.setText(TITLES[page]);
-        textArea.setText(PAGES[page]);
-        textArea.setCaretPosition(0);
+        center.removeAll();
+        ImageIcon icon = GameConstants.getIcon("howto_" + (page + 1) + ".png", IMG_W, IMG_H);
+        if (icon != null) {
+            pageImage.setIcon(icon);
+            center.add(pageImage, BorderLayout.CENTER);
+        } else {
+            textArea.setText(PAGES[page]);
+            textArea.setCaretPosition(0);
+            center.add(textScroll, BorderLayout.CENTER);
+        }
+        center.revalidate();
+        center.repaint();
         pageNumber.setText("Page " + (page + 1) + " / " + PAGES.length);
         prevBtn.setEnabled(page > 0);
         nextBtn.setEnabled(page < PAGES.length - 1);
+    }
+}
+
+// =====================================================================
+//  CreditDialog : credits.png (must contain names + IDs), or text fallback
+// =====================================================================
+class CreditDialog extends BaseDialog {
+    public CreditDialog(Window owner) {
+        super(owner, "Credits", 460, 360, "credits_bg.png");
+        body.setLayout(new BorderLayout());
+
+        if (GameConstants.hasImage("credits.png")) {
+            body.add(new JLabel(GameConstants.getIcon("credits.png", 440, 300)), BorderLayout.CENTER);
+            return;
+        }
+
+        String[][] m = GameConstants.MEMBERS;
+        JPanel list = new JPanel(new GridLayout(m.length + 2, 1, 0, 4));
+        list.setOpaque(false);
+        list.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
+
+        JLabel head = GameConstants.makeLabel("Developed by", GameConstants.HEADER_FONT, GameConstants.GOLD);
+        head.setHorizontalAlignment(SwingConstants.CENTER);
+        list.add(head);
+        for (String[] member : m) {
+            JLabel l = GameConstants.makeLabel(member[0] + "     " + member[1], GameConstants.BOLD_FONT, GameConstants.TEXT);
+            l.setHorizontalAlignment(SwingConstants.CENTER);
+            list.add(l);
+        }
+        JLabel foot = GameConstants.makeLabel("EGCO213 - Project 3", GameConstants.NORMAL_FONT, Color.LIGHT_GRAY);
+        foot.setHorizontalAlignment(SwingConstants.CENTER);
+        list.add(foot);
+        body.add(list, BorderLayout.CENTER);
     }
 }
 
@@ -193,7 +252,7 @@ class SettingDialog extends BaseDialog {
     private JLabel bgmValue, sfxValue;
 
     public SettingDialog(Window owner) {
-        super(owner, "Settings", 440, 290);
+        super(owner, "Settings", 440, 290, "setting_bg.png");
         body.setLayout(null);
 
         // ---- audio ON / OFF ----
@@ -276,36 +335,11 @@ class SettingDialog extends BaseDialog {
 }
 
 // =====================================================================
-//  CreditDialog : IDs and names of group members
-// =====================================================================
-class CreditDialog extends BaseDialog {
-    public CreditDialog(Window owner) {
-        super(owner, "Credits", 460, 360);
-        String[][] m = GameConstants.MEMBERS;
-        body.setLayout(new GridLayout(m.length + 2, 1, 0, 4));
-        body.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
-
-        JLabel head = GameConstants.makeLabel("Developed by", GameConstants.HEADER_FONT, GameConstants.GOLD);
-        head.setHorizontalAlignment(SwingConstants.CENTER);
-        body.add(head);
-
-        for (String[] member : m) {
-            JLabel l = GameConstants.makeLabel(member[0] + "     " + member[1], GameConstants.BOLD_FONT, GameConstants.TEXT);
-            l.setHorizontalAlignment(SwingConstants.CENTER);
-            body.add(l);
-        }
-        JLabel foot = GameConstants.makeLabel("EGCO213 - Project 3", GameConstants.NORMAL_FONT, Color.LIGHT_GRAY);
-        foot.setHorizontalAlignment(SwingConstants.CENTER);
-        body.add(foot);
-    }
-}
-
-// =====================================================================
 //  LeaderboardDialog : one tab per map, JTable of best scores
 // =====================================================================
 class LeaderboardDialog extends BaseDialog {
     public LeaderboardDialog(Window owner, String selectMap) {
-        super(owner, "Leaderboard", 660, 440);
+        super(owner, "Leaderboard", 660, 440, "leaderboard_bg.png");
         body.setLayout(new BorderLayout());
         body.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -350,94 +384,5 @@ class LeaderboardDialog extends BaseDialog {
         table.getTableHeader().setReorderingAllowed(false);
         p.add(new JScrollPane(table), BorderLayout.CENTER);
         return p;
-    }
-}
-
-// =====================================================================
-//  PauseDialog : Resume / How to Play / Settings / Exit to menu
-// =====================================================================
-class PauseDialog extends BaseDialog {
-    public PauseDialog(final GameFrame game) {
-        super(game, "Paused", 340, 330);
-        body.setLayout(new GridLayout(4, 1, 0, 12));
-        body.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
-
-        JButton resume = GameConstants.makeButton("Resume", GameConstants.GREEN);
-        JButton how = GameConstants.makeButton("How to Play", GameConstants.BLUE);
-        JButton setting = GameConstants.makeButton("Settings", new Color(95, 95, 120));
-        JButton exit = GameConstants.makeButton("Exit to Main Menu", GameConstants.RED);
-
-        resume.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { dispose(); }
-        });
-        how.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { new HowToPlayDialog(PauseDialog.this).setVisible(true); }
-        });
-        setting.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { new SettingDialog(PauseDialog.this).setVisible(true); }
-        });
-        exit.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-                game.exitToMenu();
-            }
-        });
-
-        body.add(resume); body.add(how); body.add(setting); body.add(exit);
-
-        // press P or ESC again to resume
-        body.setFocusable(true);
-        body.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_P || e.getKeyCode() == KeyEvent.VK_ESCAPE) dispose();
-            }
-        });
-        addWindowListener(new WindowAdapter() {
-            public void windowOpened(WindowEvent e) { body.requestFocusInWindow(); }
-        });
-    }
-}
-
-// =====================================================================
-//  EndGameDialog : Victory / Defeat summary
-// =====================================================================
-class EndGameDialog extends BaseDialog {
-    public EndGameDialog(GameFrame game, boolean victory, String name, final String map, int waves, int kills) {
-        super(game, victory ? "Victory" : "Defeat", 460, 380);
-        body.setLayout(null);
-
-        JLabel result = GameConstants.makeLabel(victory ? "VICTORY!" : "DEFEAT",
-                new Font("SansSerif", Font.BOLD, 44), victory ? GameConstants.GOLD : GameConstants.RED);
-        result.setHorizontalAlignment(SwingConstants.CENTER);
-        result.setBounds(0, 15, 454, 55);
-        body.add(result);
-
-        String[] info = {
-            "Player: " + name,
-            "Map: " + map,
-            "Waves Completed: " + waves + " / " + GameConstants.MAX_WAVE,
-            "Mobs Killed: " + kills
-        };
-        for (int i = 0; i < info.length; i++) {
-            JLabel l = GameConstants.makeLabel(info[i], GameConstants.HEADER_FONT, GameConstants.TEXT);
-            l.setHorizontalAlignment(SwingConstants.CENTER);
-            l.setBounds(0, 85 + i * 36, 454, 30);
-            body.add(l);
-        }
-
-        JButton boardBtn = GameConstants.makeButton("Leaderboard", new Color(200, 140, 30));
-        boardBtn.setBounds(50, 250, 160, 44);
-        boardBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                new LeaderboardDialog(EndGameDialog.this, map).setVisible(true);
-            }
-        });
-        JButton menuBtn = GameConstants.makeButton("Main Menu", GameConstants.BLUE);
-        menuBtn.setBounds(244, 250, 160, 44);
-        menuBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { dispose(); }
-        });
-        body.add(boardBtn);
-        body.add(menuBtn);
     }
 }
