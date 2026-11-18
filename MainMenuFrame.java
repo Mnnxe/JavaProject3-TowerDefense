@@ -9,7 +9,7 @@ import javax.swing.border.TitledBorder;
 //  MainMenuFrame : first window
 // =====================================================================
 public class MainMenuFrame extends JFrame {
-    private static final int W = 900, H = 580;
+    private static final int W = 1020, H = 660;
 
     public MainMenuFrame() {
         super("Tower Defense: Professor Edition");

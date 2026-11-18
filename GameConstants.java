@@ -27,14 +27,14 @@ public class GameConstants {
     public static final int COLS = 22, ROWS = 11, CELL = 46;
     public static final int MAP_W = COLS * CELL, MAP_H = ROWS * CELL;
 
-    // ---------- game rules ----------
+    // ---------- game rules ---------- //-->change to insert picture
     public static final int MAX_HP = 100;
     public static final int START_COINS = 150;
     public static final int MAX_COINS = 999999;
     public static final int MAX_WAVE = 10;
     public static final double REFUND_RATE = 0.70;
 
-    // ---------- group members (shown in Credits) ----------
+    // ---------- group members (shown in Credits) ---------- //change to insert picture
     public static final String[][] MEMBERS = {
         {"6xxxxxxx", "Firstname Lastname 1"},
         {"6xxxxxxx", "Firstname Lastname 2"},

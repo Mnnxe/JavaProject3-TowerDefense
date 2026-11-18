@@ -151,14 +151,21 @@ public class MapData {
 
     private void drawPortal(Graphics2D g, int c, int r, int cs) {
         int x = c * cs, y = r * cs;
-        g.setColor(new Color(90, 30, 140));
-        g.fillOval(x + cs / 8, y + cs / 10, cs * 3 / 4, cs * 4 / 5);
-        g.setColor(new Color(170, 90, 230));
-        g.fillOval(x + cs / 4, y + cs / 4, cs / 2, cs / 2);
-        g.setColor(new Color(240, 200, 255));
-        g.fillOval(x + cs * 3 / 8, y + cs * 3 / 8, cs / 4, cs / 4);
-    }
+        int frame = (int) ((System.currentTimeMillis() / 150) % 3) + 1;
+        BufferedImage img = GameConstants.getImage("portal" + frame + ".png");
 
+        if (img != null) {   
+            g.drawImage(img,x,y,cs,cs,null);
+        } else { 
+            g.setColor(new Color(90, 30, 140));
+            g.fillOval(x + cs / 8, y + cs / 10, cs * 3 / 4, cs * 4 / 5);
+            g.setColor(new Color(170, 90, 230));
+            g.fillOval(x + cs / 4, y + cs / 4, cs / 2, cs / 2);
+            g.setColor(new Color(240, 200, 255));
+            g.fillOval(x + cs * 3 / 8, y + cs * 3 / 8, cs / 4, cs / 4);
+        }
+            
+    }
     private void drawBase(Graphics2D g, int c, int r, int cs) {
         int x = c * cs, y = r * cs;
         g.setColor(new Color(150, 150, 165));

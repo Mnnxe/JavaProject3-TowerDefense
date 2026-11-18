@@ -654,7 +654,7 @@ class GamePanel extends JPanel implements Runnable {
     }
 
     private void drawGrid(Graphics2D g) {
-        g.setColor(new Color(255, 255, 255, 35));
+        g.setColor(new Color(0, 0, 0, 50));
         for (int c = 0; c <= COLS; c++) g.drawLine(c * CELL, 0, c * CELL, MAP_H);
         for (int r = 0; r <= ROWS; r++) g.drawLine(0, r * CELL, MAP_W, r * CELL);
     }
