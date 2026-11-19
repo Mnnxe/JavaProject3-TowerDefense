@@ -65,21 +65,29 @@ public class Tower {
 
     // ================= drawing (archer.png / cannon.png / ice.png / fire.png) =================
     public void draw(Graphics2D g) {
-        int x = col * CELL, y = row * CELL, cx = x + CELL / 2, cy = y + CELL / 2;
+        int x = col * CELL;
+        int y = row * CELL;
+        int cx = x + CELL / 2;
+        int cy = y + CELL / 2;
+
+        int levelOffset = 3*level;
+
+        int weaponX = cx ;
+        int weaponY = cy - 10 -levelOffset;
        
-        BufferedImage tower = GameConstants.getImage(type.name().toLowerCase()+ level + ".png");
+        BufferedImage tower = GameConstants.getImage("tower" + level + ".png");
         BufferedImage weapon = GameConstants.getImage(type.name().toLowerCase() + "_weapon.png");
         if (tower != null && weapon != null) {
-            g.drawImage(tower, x + 4, y + 4, CELL - 8, CELL - 10, null);
+            g.drawImage(tower, x + 4, y - 15, CELL - 8, CELL+10, null);
             if (weapon != null) {
                 AffineTransform old = g.getTransform();
-                g.translate(cx, cy);
-                int wSize = CELL;
+                g.translate(weaponX,weaponY);
+                double wSize = CELL;
                 if(type != TowerType.ICE && type != TowerType.FIRE){
                     g.rotate(angle + Math.PI / 2);
-                    g.drawImage(weapon, -wSize / 2, -wSize / 2, wSize, wSize, null);
+                    g.drawImage(weapon, -wSize / 2 , -wSize / 2, wSize, wSize, null);
                 }
-                else    g.drawImage(weapon, -wSize / 2, (-wSize / 2)-10, wSize, wSize, null);
+                else    g.drawImage(weapon, -wSize / 2 + 12, -wSize / 2 + 2 , wSize/2, wSize/2, null);
 
                 g.setTransform(old);
             }

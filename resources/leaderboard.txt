@@ -52,3 +52,17 @@ Forest;rgsg;2;10
 Forest;hhj;2;16
 Forest;sdgsdg;3;33
 Forest;ยนรี;1;12
+Forest;gdsgdg;2;18
+Forest;fsgsdfgdf;2;16
+Forest;กหเกเ;4;57
+Forest;sfasf;0;1
+Forest;dfasff;0;2
+Forest;fasf;0;0
+Forest;gsg;1;6
+Forest;gdfgdg;1;6
+Forest;fafsf;3;33
+Forest;หหฟดด;4;50
+Forest;afaasff;3;33
+Forest;dgsdgd;3;33
+Forest;gkhgkjh;2;24
+Forest;ghhjhjvk;3;33
