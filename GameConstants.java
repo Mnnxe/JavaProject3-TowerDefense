@@ -13,7 +13,8 @@ import javax.swing.*;
 //  GameConstants : shared values + helper methods (frame, images, buttons)
 // =====================================================================
 public class GameConstants {
-    public static final String PATH = "src/main/java/JavaProject3_TowerDefense/resources/";
+    //public static final String PATH = "src/main/java/JavaProject3_TowerDefense/resources/";
+    public static final String PATH = "resources/";
     public static final String IMG_PATH = PATH + "images/";
     public static final String AUDIO_PATH = PATH + "audio/";
     public static final String LEADERBOARD_FILE = PATH + "leaderboard.txt";

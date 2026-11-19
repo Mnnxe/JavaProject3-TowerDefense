@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.awt.image.BufferedImage;
 
 public class Effect {
-    private static final int HIT = 0, EXPLOSION = 1, ICE = 2, FIRE = 3, DEATH = 4, TEXT = 5, BANNER = 6, UPGRADE = 7;
+    private static final int HIT = 0, EXPLOSION = 1, ICE = 2, FIRE = 3, DEATH = 4, TEXT = 5, BANNER = 6;
     private TowerType type;
     private int kind;
     private double x, y, life, maxLife, radius = 16;
@@ -18,45 +18,40 @@ public class Effect {
         this.life = life; 
         this.maxLife = life;
     }
-    /*
-    public static Effect hit(double x, double y, TowerType type) { 
-        Effect e = new Effect(HIT, x, y, 0.2); 
-        e.type = type; 
-        return e;
-    }
-    */
+   
     public static Effect explosion(double x, double y, double radius, TowerType type) {
-        Effect e = new Effect(EXPLOSION, x, y, 0.25); 
+        Effect e = new Effect(EXPLOSION, x, y, 0.65); 
         e.radius = radius; 
         e.type = type; 
         return e;
     }
     public static Effect iceBurst(double x, double y, TowerType type) { 
-        Effect e = new Effect(ICE, x, y, 0.25); 
+        Effect e = new Effect(ICE, x, y, 0.45); 
         e.type = type; 
         return e;
     }
     public static Effect fireBurst(double x, double y, TowerType type) { 
-        Effect e = new Effect(FIRE, x, y, 0.25); 
+        Effect e = new Effect(FIRE, x, y, 0.45); 
         e.type = type; 
         return e;
     }
     public static Effect death(double x, double y, Color c) {
-        Effect e = new Effect(DEATH, x, y, 0.25); 
-        e.color = c; return e;
+        Effect e = new Effect(DEATH, x, y, 0.45); 
+        e.color = c; 
+        return e;
     }
     public static Effect text(double x, double y, String t, Color c) {
         Effect e = new Effect(TEXT, x, y, 1.1); 
-        e.text = t; e.color = c; return e;
+        e.text = t; e.color = c; 
+        return e;
     }
     public static Effect banner(double x, double y, String t, Color c) {
-        Effect e = new Effect(BANNER, x, y, 2.2); e.text = t; e.color = c; return e;
+        Effect e = new Effect(BANNER, x, y, 2.2); 
+        e.text = t; 
+        e.color = c; 
+        return e;
     }
-    /*
-    public static Effect upgrade(double x, double y) {
-        Effect e = new Effect(UPGRADE, x, y, 1); return e;
-    }
-    */
+    
 
     public void update(double dt) {
         life -= dt;
@@ -126,19 +121,6 @@ public class Effect {
             g.setComposite(old);
         }
     }
-/*
-private void drawTowerUpgrade(Graphics2D g,int ix,int iy,double a,double p) {
-    int frame = Math.min(2,(int)(p * 2) + 1);
-    BufferedImage upgrade = GameConstants.getImage( "towerupgrade" + frame + ".png");
-    if (upgrade != null) {
-        int size = 50;
-        Composite old = g.getComposite();
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float) a));
-        g.drawImage(upgrade,ix - size / 2,iy - size / 2,size,size,null);
-        g.setComposite(old);
-    }
-}
-*/
 
     private void drawCenteredText(Graphics2D g, int cx, int cy, int size, double a) {
         g.setFont(new Font("SansSerif", Font.BOLD, size));

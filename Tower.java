@@ -31,6 +31,8 @@ public class Tower {
     public double getRangePixels() { return type.getRange(level) * CELL; }
     public int getUpgradeCost() { return level < 3 ? type.getCost(level + 1) : -1; }
     public int getRefund() { return (int) Math.round(totalPaid * GameConstants.REFUND_RATE); }
+    private double getWeaponX() { return getCenterX(); }
+    private double getWeaponY() { return getCenterY() - 10 - (3 * level); }
 
     public void upgrade() {
         if (level < 3) {
@@ -57,9 +59,9 @@ public class Tower {
         if (target == null) { cooldown = 0; return; }
 
         angle = Math.atan2(target.getY() - cy, target.getX() - cx);
-        projectiles.add(new Projectile(type, level, cx, cy, target));
+        projectiles.add(new Projectile(type, level, getWeaponX(), getWeaponY(), target));
         cooldown = 1.0 / type.getRate(level);
-        fireFlash = 0.1;
+        //fireFlash = 0.1;
         SoundManager.playSFX(type.name().toLowerCase());
     }
 
@@ -70,11 +72,6 @@ public class Tower {
         int cx = x + CELL / 2;
         int cy = y + CELL / 2;
 
-        int levelOffset = 3*level;
-
-        int weaponX = cx;
-        int weaponY = cy - 10 - levelOffset;
-
         BufferedImage tower = GameConstants.getImage("tower" + level + ".png");
         BufferedImage weapon = GameConstants.getImage(type.name().toLowerCase() + "_weapon.png");
 
@@ -83,7 +80,7 @@ public class Tower {
 
             if (weapon != null) {
                 AffineTransform old = g.getTransform();
-                g.translate(weaponX, weaponY);
+                g.translate(getWeaponX(), getWeaponY());
 
                 int wSize = CELL;
 
@@ -99,12 +96,13 @@ public class Tower {
             }
         }
         else drawShape(g, cx, cy);
-
-        if (fireFlash > 0) {
-            int fx = (int) (cx + Math.cos(angle) * 20), fy = (int) (cy + Math.sin(angle) * 20);
-            g.setColor(new Color(255, 255, 150, 190));
-            g.fillOval(fx - 5, fy - 5, 10, 10);
-        }
+/*
+if (fireFlash > 0) {
+    int fx = (int) (cx + Math.cos(angle) * 20), fy = (int) (cy + Math.sin(angle) * 20);
+    g.setColor(new Color(255, 255, 150, 190));
+    g.fillOval(fx - 5, fy - 5, 10, 10);
+}
+*/
 
         /*
         for (int i = 0; i < level; i++) {            // level stars

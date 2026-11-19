@@ -310,7 +310,7 @@ public class GamePanel extends JPanel implements Runnable {
         coins -= cost;
         t.upgrade();
         popup(px, py, "Level " + t.getLevel() + "!", GameConstants.GOLD);
-        effects.add(Effect.iceBurst(t.getCenterX(), t.getCenterY()));
+        //effects.add(Effect.iceBurst(t.getCenterX(), t.getCenterY()));
         SoundManager.playSFX("upgrade");
     }
 

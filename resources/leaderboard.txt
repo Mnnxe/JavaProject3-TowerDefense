@@ -84,3 +84,17 @@ Forest;sdfd;6;123
 Lab 6273;้ก่ห้สดฟ;3;55
 Lab 6273;ฟดหฟห;0;0
 Forest;ดดฟหด;3;42
+Desert;หฟดห;5;87
+Desert;afasf;7;159
+Forest;safa;0;0
+Desert;fafafd;0;0
+Forest;fdssaf;0;0
+Forest;afsf;4;60
+Snow;saffsfsa;4;44
+Forest;เ้เ้า;0;0
+Forest;ดเเด่;1;0
+Forest;ฟหดฟหดห;5;73
+Forest;ดกดเหกเ;0;1
+Forest;เกฟเห;0;4
+Forest;asffa;0;1
+Forest;dsfasfaf;10;259
