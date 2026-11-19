@@ -13,9 +13,7 @@ import javax.swing.*;
 //  GameConstants : shared values + helper methods (frame, images, buttons)
 // =====================================================================
 public class GameConstants {
-    // ---------- relative paths (from Project3_XXX folder) ----------
-    //public static final String PATH = "src/main/java/JavaProject3_TowerDefense/resources/";
-    public static final String PATH = "resources/";
+    public static final String PATH = "src/main/java/JavaProject3_TowerDefense/resources/";
     public static final String IMG_PATH = PATH + "images/";
     public static final String AUDIO_PATH = PATH + "audio/";
     public static final String LEADERBOARD_FILE = PATH + "leaderboard.txt";
@@ -29,7 +27,7 @@ public class GameConstants {
 
     // ---------- game rules ---------- //-->change to insert picture
     public static final int MAX_HP = 100;
-    public static final int START_COINS = 150;
+    public static final int START_COINS = 100;
     public static final int MAX_COINS = 999999;
     public static final int MAX_WAVE = 10;
     public static final double REFUND_RATE = 0.70;

@@ -53,7 +53,7 @@ public class Mob {
         if (nextWp >= map.getWaypointCount()) reachedBase = true;
     }
 
-    public void takeDamage(double dmg) { hp -= dmg; hitFlash = 0.08; }
+    public void takeDamage(double dmg) { hp -= dmg; hitFlash = 0.12; }
 
     public void applySlow(double pct, double time) {
         if (slowTimer <= 0 || pct >= slowPct) slowPct = pct;
@@ -77,58 +77,41 @@ public class Mob {
 
     // ================= drawing =================
     public void draw(Graphics2D g) {
+        int r = type.getRadius();
+        int cx = (int) x, cy = (int) y;
+
         // Basic mobs use 3 walking frames from resources/images/mobs/ (e.g. mobs/goblin_1.png)
         // The frame changes with distance travelled, so the animation stops when the mob stops.
-        int r = type.getRadius();
-        int cx = (int) x;
-        int cy = (int) y;
-
-        /*
+        String imageName = type.getImage(special);
         if (!special && !type.isBoss()) {
+            int frame = ((int) (distance / 8) % 3) + 1;
             imageName = type.name().toLowerCase() + frame + ".png";
-            }
-            */
-           
-        int frame = ((int) (distance / 8) % 3) + 1;
-        int s = Math.max(32, r * 3);
-        String imageName = type.getImage(special)+frame+".png";
+        }
+
         BufferedImage img = GameConstants.getImage(imageName);
         if (img != null) {
+            int s = Math.max(32, r * 3);
             g.drawImage(img, cx - s / 2, cy - s / 2, s, s, null);
         } else {
             drawShape(g, cx, cy, r);
         }
 
-        Composite oldComposite = g.getComposite();
-        // ice effect
-        if (slowTimer > 0) {
-            BufferedImage debuff = GameConstants.getImage("frost.png");
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.6f));
-            g.drawImage(debuff, cx - s / 2, cy - s / 2, s, s, null);
-            g.setComposite(oldComposite);
-            //g.setColor(new Color(130, 210, 255, 110));
-            //g.fillOval(cx - r - 3, cy - r - 3, 2 * r + 6, 2 * r + 6);
-            
+        if (slowTimer > 0) {                                   // ice effect
+            g.setColor(new Color(130, 210, 255, 110));
+            g.fillOval(cx - r - 3, cy - r - 3, 2 * r + 6, 2 * r + 6);
         }
-        
-        // fire effect (flickering flames)
-        if (burnTimer > 0) {
-            BufferedImage debuff = GameConstants.getImage("burn.png");
-            double time = System.currentTimeMillis() / 150.0;
-            float opacity = (float) (0.7 + 0.2 * Math.sin(time));
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,opacity));
-            g.drawImage(debuff, cx - s / 2, cy - s / 2, s, s, null);
-            g.setComposite(oldComposite);
-            /*g.setColor(new Color(255, 110 + flick * 40, 0, 200));
+        if (burnTimer > 0) {                                   // fire effect (flickering flames)
+            int flick = (int) (System.currentTimeMillis() / 60 % 3);
+            g.setColor(new Color(255, 110 + flick * 40, 0, 200));
             for (int i = -1; i <= 1; i++) {
                 int fx = cx + i * r / 2;
                 g.fillPolygon(new int[]{fx - 3, fx, fx + 3}, new int[]{cy - r + 2, cy - r - 7 - flick * 2, cy - r + 2}, 3);
-            }*/
+            }
         }
-        /*if (hitFlash > 0) {
+        if (hitFlash > 0) {
             g.setColor(new Color(255, 255, 255, 140));
             g.fillOval(cx - r, cy - r, 2 * r, 2 * r);
-        }*/
+        }
 
         // HP bar
         int bw = Math.max(26, r * 2);
@@ -237,12 +220,12 @@ public class Mob {
 // =====================================================================
 enum MobType {
     //         normal       special          hp   spawnCD speed dmg coin  colour                   radius normalImg      specialImg
-    GOBLIN   ("Goblin",    "AJ.Ming",        60,  1.0, 1.0,   5,  10, new Color(90,170,70),   13, "goblin",   "ajming"),
-    WOLF     ("Wolf",      "AJ.Konlakorn",      50,  1.0, 2.0,   5,  12, new Color(150,150,160), 13, "wolf",     "ajkonlakorn"),
-    BAT      ("Bat",       "AJ.Tanassanee",  40,  0.8, 1.4,   5,   5, new Color(120,70,150),   9, "bat",      "ajtanassanee"),
-    GOLEM    ("Golem",     "AJ.Tum",        220,  1.2, 0.6,  10,  25, new Color(130,110,90),  17, "golem",    "ajtum"),
-    MINI_BOSS("Mini Boss", "AJ.Vasin",        1000,  1.5, 0.5,  50, 100, new Color(200,50,50),   20, "mini_boss","ajvasin"),
-    BOSS     ("Boss",      "AJ.Kob",       2800,  1.5, 0.5, 100, 250, new Color(90,40,120),   24, "boss",     "ajkob");
+    GOBLIN   ("Goblin",    "AJ.Ming",        60,  1.0, 1.0,   5,  10, new Color(90,170,70),   13, "goblin.png",   "ajming.png"),
+    WOLF     ("Wolf",      "Konlakorn",      50,  1.0, 2.0,   5,  12, new Color(150,150,160), 13, "wolf.png",     "konlakorn.png"),
+    BAT      ("Bat",       "AJ.Tanassanee",  40,  0.8, 1.4,   5,   5, new Color(120,70,150),   9, "bat.png",      "ajtanassanee.png"),
+    GOLEM    ("Golem",     "AJ.Tum",        220,  1.2, 0.6,  10,  25, new Color(130,110,90),  17, "golem.png",    "ajtum.png"),
+    MINI_BOSS("Mini Boss", "Vasin",        1000,  1.5, 0.5,  50, 100, new Color(200,50,50),   20, "mini_boss.png","ajvasin.png"),
+    BOSS     ("Boss",      "AJ.Kob",       2800,  1.5, 0.5, 100, 250, new Color(90,40,120),   24, "boss.png",     "ajkob.png");
 
     private String normalName, specialName, normalImage, specialImage;
     private int maxHp, baseDamage, coinDrop, radius;
