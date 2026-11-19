@@ -77,18 +77,21 @@ public class Mob {
 
     // ================= drawing =================
     public void draw(Graphics2D g) {
-        int r = type.getRadius();
-        int cx = (int) x, cy = (int) y;
-
         // Basic mobs use 3 walking frames from resources/images/mobs/ (e.g. mobs/goblin_1.png)
         // The frame changes with distance travelled, so the animation stops when the mob stops.
-        String imageName = type.getImage(special);
+        int r = type.getRadius();
+        int cx = (int) x;
+        int cy = (int) y;
+
+        /*
         if (!special && !type.isBoss()) {
-            int frame = ((int) (distance / 8) % 3) + 1;
             imageName = type.name().toLowerCase() + frame + ".png";
-        }
-        
+            }
+            */
+           
+        int frame = ((int) (distance / 8) % 3) + 1;
         int s = Math.max(32, r * 3);
+        String imageName = type.getImage(special)+frame+".png";
         BufferedImage img = GameConstants.getImage(imageName);
         if (img != null) {
             g.drawImage(img, cx - s / 2, cy - s / 2, s, s, null);
@@ -234,12 +237,12 @@ public class Mob {
 // =====================================================================
 enum MobType {
     //         normal       special          hp   spawnCD speed dmg coin  colour                   radius normalImg      specialImg
-    GOBLIN   ("Goblin",    "AJ.Ming",        60,  1.0, 1.0,   5,  10, new Color(90,170,70),   13, "goblin.png",   "ajming.png"),
-    WOLF     ("Wolf",      "Konlakorn",      50,  1.0, 2.0,   5,  12, new Color(150,150,160), 13, "wolf.png",     "konlakorn.png"),
-    BAT      ("Bat",       "AJ.Tanassanee",  40,  0.8, 1.4,   5,   5, new Color(120,70,150),   9, "bat.png",      "ajtanassanee.png"),
-    GOLEM    ("Golem",     "AJ.Tum",        220,  1.2, 0.6,  10,  25, new Color(130,110,90),  17, "golem.png",    "ajtum.png"),
-    MINI_BOSS("Mini Boss", "Vasin",        1000,  1.5, 0.5,  50, 100, new Color(200,50,50),   20, "mini_boss.png","ajvasin.png"),
-    BOSS     ("Boss",      "AJ.Kob",       2800,  1.5, 0.5, 100, 250, new Color(90,40,120),   24, "boss.png",     "ajkob.png");
+    GOBLIN   ("Goblin",    "AJ.Ming",        60,  1.0, 1.0,   5,  10, new Color(90,170,70),   13, "goblin",   "ajming"),
+    WOLF     ("Wolf",      "AJ.Konlakorn",      50,  1.0, 2.0,   5,  12, new Color(150,150,160), 13, "wolf",     "ajkonlakorn"),
+    BAT      ("Bat",       "AJ.Tanassanee",  40,  0.8, 1.4,   5,   5, new Color(120,70,150),   9, "bat",      "ajtanassanee"),
+    GOLEM    ("Golem",     "AJ.Tum",        220,  1.2, 0.6,  10,  25, new Color(130,110,90),  17, "golem",    "ajtum"),
+    MINI_BOSS("Mini Boss", "AJ.Vasin",        1000,  1.5, 0.5,  50, 100, new Color(200,50,50),   20, "mini_boss","ajvasin"),
+    BOSS     ("Boss",      "AJ.Kob",       2800,  1.5, 0.5, 100, 250, new Color(90,40,120),   24, "boss",     "ajkob");
 
     private String normalName, specialName, normalImage, specialImage;
     private int maxHp, baseDamage, coinDrop, radius;

@@ -26,23 +26,23 @@ public class Effect {
     }
     */
     public static Effect explosion(double x, double y, double radius, TowerType type) {
-        Effect e = new Effect(EXPLOSION, x, y, 0.2); 
+        Effect e = new Effect(EXPLOSION, x, y, 0.25); 
         e.radius = radius; 
         e.type = type; 
         return e;
     }
     public static Effect iceBurst(double x, double y, TowerType type) { 
-        Effect e = new Effect(ICE, x, y, 0.2); 
+        Effect e = new Effect(ICE, x, y, 0.25); 
         e.type = type; 
         return e;
     }
     public static Effect fireBurst(double x, double y, TowerType type) { 
-        Effect e = new Effect(FIRE, x, y, 0.2); 
+        Effect e = new Effect(FIRE, x, y, 0.25); 
         e.type = type; 
         return e;
     }
     public static Effect death(double x, double y, Color c) {
-        Effect e = new Effect(DEATH, x, y, 0.2); 
+        Effect e = new Effect(DEATH, x, y, 0.25); 
         e.color = c; return e;
     }
     public static Effect text(double x, double y, String t, Color c) {
@@ -102,7 +102,7 @@ public class Effect {
         if (impact != null) {
             int size = (int) (30 + 20 * p);
             Composite oldComposite = g.getComposite();
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.5f));
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.7f));
             g.drawImage(impact, ix - size / 2, iy - size / 2, size, size, null);
             g.setComposite(oldComposite);
             System.out.println("Drawing impact effect for available image");

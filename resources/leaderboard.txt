@@ -81,3 +81,6 @@ Forest;asfdass;1;6
 Forest;hfjasklf;0;1
 Forest;hdjflh;4;57
 Forest;sdfd;6;123
+Lab 6273;้ก่ห้สดฟ;3;55
+Lab 6273;ฟดหฟห;0;0
+Forest;ดดฟหด;3;42
