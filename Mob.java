@@ -87,31 +87,45 @@ public class Mob {
             int frame = ((int) (distance / 8) % 3) + 1;
             imageName = type.name().toLowerCase() + frame + ".png";
         }
-
+        
+        int s = Math.max(32, r * 3);
         BufferedImage img = GameConstants.getImage(imageName);
         if (img != null) {
-            int s = Math.max(32, r * 3);
             g.drawImage(img, cx - s / 2, cy - s / 2, s, s, null);
         } else {
             drawShape(g, cx, cy, r);
         }
 
-        if (slowTimer > 0) {                                   // ice effect
-            g.setColor(new Color(130, 210, 255, 110));
-            g.fillOval(cx - r - 3, cy - r - 3, 2 * r + 6, 2 * r + 6);
+        Composite oldComposite = g.getComposite();
+        // ice effect
+        if (slowTimer > 0) {
+            BufferedImage debuff = GameConstants.getImage("frost.png");
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.6f));
+            g.drawImage(debuff, cx - s / 2, cy - s / 2, s, s, null);
+            g.setComposite(oldComposite);
+            //g.setColor(new Color(130, 210, 255, 110));
+            //g.fillOval(cx - r - 3, cy - r - 3, 2 * r + 6, 2 * r + 6);
+            
         }
-        if (burnTimer > 0) {                                   // fire effect (flickering flames)
-            int flick = (int) (System.currentTimeMillis() / 60 % 3);
-            g.setColor(new Color(255, 110 + flick * 40, 0, 200));
+        
+        // fire effect (flickering flames)
+        if (burnTimer > 0) {
+            BufferedImage debuff = GameConstants.getImage("burn.png");
+            double time = System.currentTimeMillis() / 150.0;
+            float opacity = (float) (0.7 + 0.2 * Math.sin(time));
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,opacity));
+            g.drawImage(debuff, cx - s / 2, cy - s / 2, s, s, null);
+            g.setComposite(oldComposite);
+            /*g.setColor(new Color(255, 110 + flick * 40, 0, 200));
             for (int i = -1; i <= 1; i++) {
                 int fx = cx + i * r / 2;
                 g.fillPolygon(new int[]{fx - 3, fx, fx + 3}, new int[]{cy - r + 2, cy - r - 7 - flick * 2, cy - r + 2}, 3);
-            }
+            }*/
         }
-        if (hitFlash > 0) {
+        /*if (hitFlash > 0) {
             g.setColor(new Color(255, 255, 255, 140));
             g.fillOval(cx - r, cy - r, 2 * r, 2 * r);
-        }
+        }*/
 
         // HP bar
         int bw = Math.max(26, r * 2);

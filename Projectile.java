@@ -53,7 +53,7 @@ public class Projectile {
         switch (type) {
             case ARCHER:
                 if (targetOk) target.takeDamage(dmg);
-                effects.add(Effect.hit(x, y, type));
+                //effects.add(Effect.hit(x, y, type));
                 break;
             case CANNON:
                 double r = TowerType.SPLASH_RADIUS * GameConstants.CELL;

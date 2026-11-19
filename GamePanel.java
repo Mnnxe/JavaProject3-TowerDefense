@@ -4,6 +4,7 @@
 package JavaProject3_TowerDefense;
 import java.awt.*;
 import java.awt.event.*;
+import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import javax.swing.*;
@@ -310,8 +311,7 @@ public class GamePanel extends JPanel implements Runnable {
         coins -= cost;
         t.upgrade();
         popup(px, py, "Level " + t.getLevel() + "!", GameConstants.GOLD);
-        //tower upgrade effect
-        //effects.add(Effect.iceBurst(t.getCenterX(), t.getCenterY()));
+        //effects.add(Effect.upgrade(px, py));
         SoundManager.playSFX("upgrade");
     }
 
