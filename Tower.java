@@ -31,7 +31,8 @@ public class Tower {
     public double getRangePixels() { return type.getRange(level) * CELL; }
     public int getUpgradeCost() { return level < 3 ? type.getCost(level + 1) : -1; }
     public int getRefund() { return (int) Math.round(totalPaid * GameConstants.REFUND_RATE); }
-
+    private double getWeaponX() { return getCenterX(); }
+    private double getWeaponY() { return getCenterY() - 10 - (3 * level); }
     public void upgrade() {
         if (level < 3) {
             totalPaid += type.getCost(level + 1);
@@ -39,8 +40,11 @@ public class Tower {
         }
     }
 
+
+
     // pick the mob that walked farthest inside range and shoot
     public void update(double dt, ArrayList<Mob> mobs, ArrayList<Projectile> projectiles) {
+
         if (fireFlash > 0) fireFlash -= dt;
         cooldown -= dt;
         if (cooldown > 0) return;
@@ -57,7 +61,7 @@ public class Tower {
         if (target == null) { cooldown = 0; return; }
 
         angle = Math.atan2(target.getY() - cy, target.getX() - cx);
-        projectiles.add(new Projectile(type, level, cx, cy, target));
+        projectiles.add(new Projectile(type, level, getWeaponX(), getWeaponY(), target));
         cooldown = 1.0 / type.getRate(level);
         fireFlash = 0.1;
         SoundManager.playSFX(type.name().toLowerCase());
@@ -70,19 +74,14 @@ public class Tower {
         int cx = x + CELL / 2;
         int cy = y + CELL / 2;
 
-        int levelOffset = 3*level;
-
-        int weaponX = cx ;
-        int weaponY = cy - 10 -levelOffset;
-       
         BufferedImage tower = GameConstants.getImage("tower" + level + ".png");
         BufferedImage weapon = GameConstants.getImage(type.name().toLowerCase() + "_weapon.png");
         if (tower != null && weapon != null) {
             g.drawImage(tower, x + 4, y - 15, CELL - 8, CELL+10, null);
             if (weapon != null) {
                 AffineTransform old = g.getTransform();
-                g.translate(weaponX,weaponY);
-                double wSize = CELL;
+                g.translate(getWeaponX(), getWeaponY());
+                int wSize = CELL;
                 if(type != TowerType.ICE && type != TowerType.FIRE){
                     g.rotate(angle + Math.PI / 2);
                     g.drawImage(weapon, -wSize / 2 , -wSize / 2, wSize, wSize, null);
@@ -94,7 +93,7 @@ public class Tower {
         } 
         else drawShape(g, cx, cy);
         
-        if (fireFlash > 0) {
+        /*if (fireFlash > 0) {
             int fx = (int) (cx + Math.cos(angle) * 20), fy = (int) (cy + Math.sin(angle) * 20);
             g.setColor(new Color(255, 255, 150, 190));
             g.fillOval(fx - 5, fy - 5, 10, 10);

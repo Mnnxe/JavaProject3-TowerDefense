@@ -107,7 +107,7 @@ public class MapDraw {
         BufferedImage pt = GameConstants.getImage("portal" + frame + ".png");
         if (pt != null) {
             g.drawImage(pt, drawX, drawY, size, size, null);
-            System.out.println("portal available");
+            //System.out.println("portal available");
             return;
         }
         g.setColor(new Color(90, 30, 140));
