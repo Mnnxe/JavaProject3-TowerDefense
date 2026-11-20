@@ -10,8 +10,10 @@ import javax.swing.table.DefaultTableModel;
 //  BaseDialog : parent of every pop-up (title bar + X button + PNG background)
 // =====================================================================
 public class BaseDialog extends JDialog {
-    protected JPanel body;
+    //protected JPanel body;
     protected JLabel titleLabel;
+    protected ImagePanel body;
+    protected JButton closeBtn;
 
     public BaseDialog(Window owner, String title, int w, int h) {
         super(owner, title, Dialog.ModalityType.APPLICATION_MODAL);
@@ -43,14 +45,14 @@ public class BaseDialog extends JDialog {
         titleLabel.setForeground(Color.BLACK);
         titleLabel.setBounds(titleX,titleY,titleW,titleH);
 
-        body = new ImagePanel(new Color(255, 255, 255, 250));        
+        body = new ImagePanel(GameConstants.BAGE);        
         body.setLayout(null);
         body.setBorder(
         BorderFactory.createLineBorder(Color.BLACK, 3));
         body.setBounds(bodyX, bodyY, bodyW, bodyH);
         
         int closeSize = 45;
-        JButton closeBtn = GameConstants.makeImageButton("btn_close.png","",GameConstants.RED,45, 45,14);
+        closeBtn = GameConstants.makeImageButton("btn_close.png","",GameConstants.RED,45, 45,14);
         closeBtn.setBounds(bodyX + bodyW - closeSize / 2,bodyY - closeSize / 2,closeSize,closeSize);        
         closeBtn.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -64,7 +66,7 @@ public class BaseDialog extends JDialog {
         root.add(closeBtn);
         root.add(body);
 
-         root.setComponentZOrder(closeBtn, 0);
+        root.setComponentZOrder(closeBtn, 0);
         root.setComponentZOrder(titleLabel, 1);
         root.setComponentZOrder(body, 2);
 
@@ -76,6 +78,14 @@ public class BaseDialog extends JDialog {
     protected void hideTitle() {
         titleLabel.setVisible(false);
     }
+ 
+    protected void hideCloseButton() {
+        closeBtn.setVisible(false);
+    }
+
+    protected void hideBody() {
+        body.setTransparent();
+    }
 
     protected void onClose() { dispose(); }
 }
@@ -85,7 +95,8 @@ public class BaseDialog extends JDialog {
 // =====================================================================
 class ExitDialog extends BaseDialog {
     public ExitDialog(Window owner) {
-        super(owner, "Exit", 480, 260);
+        super(owner, "Exit", 480, 240);
+        hideCloseButton();
         body.setLayout(null);
 
         JLabel q = GameConstants.makeLabel("Quit this game?", GameConstants.HEADER_FONT, GameConstants.TEXT);

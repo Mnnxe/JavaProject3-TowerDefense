@@ -1,6 +1,3 @@
-// Group members: 6xxxxxxx Firstname Lastname 1, 6xxxxxxx Firstname Lastname 2,
-//                6xxxxxxx Firstname Lastname 3, 6xxxxxxx Firstname Lastname 4,
-//                6xxxxxxx Firstname Lastname 5
 package JavaProject3_TowerDefense;
 import java.awt.*;
 import java.awt.event.*;
@@ -365,14 +362,17 @@ public class GamePanel extends JPanel implements Runnable {
             }
             if (!waveRunning && !gameOver) drawHint(g2);
             drawTooltip(g2);
+            
             if (paused) {
+                //Dark Overlay
                 g2.setColor(new Color(0, 0, 0, 140));
                 g2.fillRect(0, 0, getWidth(), getHeight());
-                g2.setFont(GameConstants.TITLE_FONT);
-                FontMetrics fm = g2.getFontMetrics();
-                g2.setColor(Color.WHITE);
-                g2.drawString("PAUSED", (getWidth() - fm.stringWidth("PAUSED")) / 2, getHeight() / 2);
+                //g2.setFont(GameConstants.TITLE_FONT);
+                //FontMetrics fm = g2.getFontMetrics();
+                //g2.setColor(Color.WHITE);
+                //g2.drawString("PAUSED", (getWidth() - fm.stringWidth("PAUSED")) / 2, getHeight() / 2);
             }
+            
         }
     }
 

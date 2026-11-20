@@ -9,8 +9,8 @@ import javax.sound.sampled.*;
 // =====================================================================
 public class SoundManager {
     public static final String[] SONG_NAMES = {
-        "Song 1 - Adventure", "Song 2 - Battle March", "Song 3 - Chill Lofi",
-        "Song 4 - Retro Arcade", "Song 5 - Boss Theme"
+        "Adventure", "Battle March", "Chill Lofi",
+        "Retro Arcade", "Boss Theme"
     };
 
     private static final float RATE = 22050f;
@@ -55,6 +55,37 @@ public class SoundManager {
         } catch (Exception e) {
             System.out.println("BGM error: " + e.getMessage());
             bgmClip = null;
+        }
+    }
+
+    public static synchronized void playMenuBGM() {
+        stopBGM();
+
+        if (!audioOn) return;
+    
+        try {
+            Clip clip = AudioSystem.getClip();
+            
+            File f = new File(
+            GameConstants.AUDIO_PATH + "bgm_menu.wav"
+        );
+
+        if (f.exists()) {
+            clip.open(
+                AudioSystem.getAudioInputStream(f)
+            );
+            
+            bgmClip = clip;
+            
+            setGain(bgmClip, bgmVolume);
+            
+            bgmClip.loop(
+                Clip.LOOP_CONTINUOUSLY
+            );
+        }
+        
+        }catch (Exception e) {
+            System.out.println("Menu BGM error: " + e.getMessage());
         }
     }
 

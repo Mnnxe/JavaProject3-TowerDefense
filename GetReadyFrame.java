@@ -171,10 +171,10 @@ public class GetReadyFrame extends JFrame {
             mapStatus.setForeground(GameConstants.RED);
             mapStatus.setText("LOCKED - play any basic map first!");
         } else if (m.isSpecial()) {
-            mapStatus.setForeground(GameConstants.GOLD);
+            mapStatus.setForeground(GameConstants.BROWN);
             mapStatus.setText("Special map - the professors are coming!");
         } else {
-            mapStatus.setForeground(GameConstants.TEXT);
+            mapStatus.setForeground(GameConstants.BROWN);
             mapStatus.setText("Basic map");
         }
     }

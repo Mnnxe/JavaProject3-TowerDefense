@@ -10,7 +10,7 @@ public class MainApplication {
             public void run() {
                 MainMenuFrame menu = new MainMenuFrame();
                 menu.setVisible(true);
-                SoundManager.playBGM(0);
+                SoundManager.playMenuBGM();
             }
         });
     }

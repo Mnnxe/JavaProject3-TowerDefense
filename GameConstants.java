@@ -253,6 +253,17 @@ class ImagePanel extends JPanel {
     public ImagePanel(String imageFile) { this(imageFile, null, null); }
     public ImagePanel(Color solid) { this (null, solid, solid); }
 
+    public void setTransparent() {
+        imageFile = null;
+        top = null;
+        bottom = null;
+
+        setOpaque(false);
+        setBorder(null);
+        
+        repaint();
+    }
+
     @Override 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

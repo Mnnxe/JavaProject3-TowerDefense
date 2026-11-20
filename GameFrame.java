@@ -63,7 +63,7 @@ public class GameFrame extends JFrame {
         
         JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 7));
         left.setOpaque(false);
-        JLabel playerLabel = GameConstants.makeLabel("Player: " + playerName, GameConstants.NORMAL_FONT, Color.BLACK);
+        JLabel playerLabel = GameConstants.makeLabel("Player: " + playerName, GameConstants.NORMAL_FONT, GameConstants.BAGE);
         left.add(playerLabel);
 
         hpBar = new JProgressBar(0, GameConstants.MAX_HP);

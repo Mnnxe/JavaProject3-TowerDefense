@@ -9,8 +9,10 @@ import javax.swing.*;
 public class PauseDialog extends BaseDialog {
     public PauseDialog(final GameFrame game) {
         super(game, "Paused", 340, 330);
+        hideBody();
+        hideCloseButton();
         body.setLayout(null);
-        body.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
+        //body.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
         
         int bw = 250;
         int bh = 48;
