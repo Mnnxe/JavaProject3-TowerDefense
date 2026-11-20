@@ -259,10 +259,8 @@ public class GamePanel extends JPanel implements Runnable {
             if (gameOver || paused) return;
             Tower t = towerGrid[col][row];
             if (waveRunning) {                       // no changes during a wave
-                if (t != null || selectedType != null || sellMode) {
-                    popup(px, py, "Wave in progress!", GameConstants.RED);
-                    SoundManager.playSFX("error");
-                }
+                popup(px, py, "Wave in progress!", GameConstants.RED);
+                SoundManager.playSFX("error");
                 return;
             }
             if (sellMode) sellTower(t, col, row, px, py);

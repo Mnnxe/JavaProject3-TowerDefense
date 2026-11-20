@@ -100,7 +100,7 @@ public class Effect {
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.7f));
             g.drawImage(impact, ix - size / 2, iy - size / 2, size, size, null);
             g.setComposite(oldComposite);
-            System.out.println("Drawing impact effect for available image");
+            //System.out.println("Drawing impact effect for available image");
         } /*else{
             System.out.println("Drawing impact effect for missing image");
             int r = (int) (radius * (0.3 + 0.7 * p));
@@ -123,7 +123,7 @@ public class Effect {
     }
 
     private void drawCenteredText(Graphics2D g, int cx, int cy, int size, double a) {
-        g.setFont(new Font("SansSerif", Font.BOLD, size));
+        g.setFont(GameConstants.HEADER_FONT);
         FontMetrics fm = g.getFontMetrics();
         int tx = cx - fm.stringWidth(text) / 2, ty = cy + fm.getAscent() / 2 - 2;
         g.setColor(fade(Color.BLACK, a));

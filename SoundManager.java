@@ -18,7 +18,7 @@ public class SoundManager {
     private static final int SINE = 0, SQUARE = 1, NOISE = 2, REST = -99;
     private static final Random rand = new Random();
 
-    private static boolean audioOn = true;
+    private static boolean audioOn = true, playingMenuBGM = false;
     private static int bgmVolume = 50, sfxVolume = 70, currentSong = 0;
     private static Clip bgmClip = null;
     private static final HashMap<String, Long> lastPlayed = new HashMap<String, Long>();
@@ -60,9 +60,9 @@ public class SoundManager {
 
     public static synchronized void playMenuBGM() {
         stopBGM();
+        playingMenuBGM = true;
 
         if (!audioOn) return;
-    
         try {
             Clip clip = AudioSystem.getClip();
             
@@ -71,14 +71,10 @@ public class SoundManager {
         );
 
         if (f.exists()) {
-            clip.open(
-                AudioSystem.getAudioInputStream(f)
-            );
+            clip.open(AudioSystem.getAudioInputStream(f));
             
             bgmClip = clip;
-            
             setGain(bgmClip, bgmVolume);
-            
             bgmClip.loop(
                 Clip.LOOP_CONTINUOUSLY
             );
@@ -134,7 +130,13 @@ public class SoundManager {
     // ================= settings =================
     public static synchronized void setAudioOn(boolean on) {
         audioOn = on;
-        if (on) playBGM(currentSong); else stopBGM();
+        if (!audioOn) {
+            stopBGM();
+        }
+        else{
+            if(playingMenuBGM)  playMenuBGM();
+            else                playBGM(currentSong);
+        }
     }
     public static synchronized void setBgmVolume(int v) { bgmVolume = v; setGain(bgmClip, v); }
     public static void setSfxVolume(int v) { sfxVolume = v; }

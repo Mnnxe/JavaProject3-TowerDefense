@@ -40,6 +40,7 @@ public class GetReadyFrame extends JFrame {
 
         updatePreview();
         GameConstants.setupFrame(this, root, menu);
+         SoundManager.playBGM(0);
     }
 
     // ================= sections =================

@@ -86,7 +86,7 @@ public class Projectile {
          
         BufferedImage pjt = GameConstants.getImage(type.name().toLowerCase() + "_projectile.png");
         if (pjt != null) {
-        System.out.println("Projectile: " + type.name().toLowerCase() + "_projectile.png");
+        //System.out.println("Projectile: " + type.name().toLowerCase() + "_projectile.png");
         double angle = Math.atan2(ty - y, tx - x);
         AffineTransform old = g.getTransform();
         g.translate(ix, iy);
@@ -96,36 +96,38 @@ public class Projectile {
 
         g.setTransform(old);
         }
+        /*
         else{
-        switch (type) {
-            case ARCHER:
-                double a = Math.atan2(ty - y, tx - x);
-                g.setStroke(new BasicStroke(2));
-                g.setColor(new Color(110, 70, 30));
-                g.drawLine((int) (x - Math.cos(a) * 12), (int) (y - Math.sin(a) * 12), ix, iy);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(ix - 2, iy - 2, 4, 4);
-                break;
+            switch (type) {
+        case ARCHER:
+            double a = Math.atan2(ty - y, tx - x);
+            g.setStroke(new BasicStroke(2));
+            g.setColor(new Color(110, 70, 30));
+            g.drawLine((int) (x - Math.cos(a) * 12), (int) (y - Math.sin(a) * 12), ix, iy);
+            g.setColor(Color.LIGHT_GRAY);
+            g.fillOval(ix - 2, iy - 2, 4, 4);
+            break;
             case CANNON:
                 g.setColor(Color.DARK_GRAY);
                 g.fillOval(ix - 6, iy - 6, 12, 12);
                 g.setColor(Color.BLACK);
                 g.drawOval(ix - 6, iy - 6, 12, 12);
                 break;
-            case ICE:
-                g.setColor(new Color(170, 235, 255));
-                g.fillPolygon(new int[]{ix, ix + 5, ix, ix - 5}, new int[]{iy - 6, iy, iy + 6, iy}, 4);
-                g.setColor(Color.WHITE);
-                g.drawPolygon(new int[]{ix, ix + 5, ix, ix - 5}, new int[]{iy - 6, iy, iy + 6, iy}, 4);
-                break;
-            case FIRE:
-                g.setColor(new Color(255, 90, 20));
-                g.fillOval(ix - 6, iy - 6, 12, 12);
-                g.setColor(Color.YELLOW);
-                g.fillOval(ix - 3, iy - 3, 6, 6);
-                break;
-            }
-        //g.setStroke(old);
-        }
+                case ICE:
+                    g.setColor(new Color(170, 235, 255));
+                    g.fillPolygon(new int[]{ix, ix + 5, ix, ix - 5}, new int[]{iy - 6, iy, iy + 6, iy}, 4);
+                    g.setColor(Color.WHITE);
+                    g.drawPolygon(new int[]{ix, ix + 5, ix, ix - 5}, new int[]{iy - 6, iy, iy + 6, iy}, 4);
+                    break;
+                    case FIRE:
+                        g.setColor(new Color(255, 90, 20));
+                        g.fillOval(ix - 6, iy - 6, 12, 12);
+                        g.setColor(Color.YELLOW);
+                        g.fillOval(ix - 3, iy - 3, 6, 6);
+                        break;
+                    }
+                    //g.setStroke(old);
+                }
+                */
     }
 }

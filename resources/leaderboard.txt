@@ -1,1 +1,3 @@
-Forest;asaaAD;0;2
+Desert;minnie;5;67
+Lab 6273;mn;5;67
+Lab 6273;หกดหฟด;0;4
