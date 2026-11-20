@@ -11,6 +11,7 @@ import javax.swing.table.DefaultTableModel;
 // =====================================================================
 public class BaseDialog extends JDialog {
     protected JPanel body;
+    protected JLabel titleLabel;
 
     public BaseDialog(Window owner, String title, int w, int h) {
         super(owner, title, Dialog.ModalityType.APPLICATION_MODAL);
@@ -35,14 +36,14 @@ public class BaseDialog extends JDialog {
         int titleY = 5;
 
         ImageIcon titleIcon = GameConstants.getIcon("btn_yellow.png", 220, 60);
-        JLabel titleLabel = new JLabel(title,titleIcon,SwingConstants.CENTER);
+        titleLabel = new JLabel(title,titleIcon,SwingConstants.CENTER);
         titleLabel.setHorizontalTextPosition(SwingConstants.CENTER);
         titleLabel.setVerticalTextPosition(SwingConstants.CENTER);
         titleLabel.setFont(GameConstants.HEADER_FONT);
         titleLabel.setForeground(Color.BLACK);
         titleLabel.setBounds(titleX,titleY,titleW,titleH);
 
-        body = new ImagePanel(new Color(255, 255, 255, 255));        
+        body = new ImagePanel(new Color(255, 255, 255, 250));        
         body.setLayout(null);
         body.setBorder(
         BorderFactory.createLineBorder(Color.BLACK, 3));
@@ -70,6 +71,10 @@ public class BaseDialog extends JDialog {
 
         setContentPane(root);
         setLocationRelativeTo(owner);
+    }
+
+    protected void hideTitle() {
+        titleLabel.setVisible(false);
     }
 
     protected void onClose() { dispose(); }

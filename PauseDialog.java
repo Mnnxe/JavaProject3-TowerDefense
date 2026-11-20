@@ -68,14 +68,15 @@ public class PauseDialog extends BaseDialog {
 // =====================================================================
 class EndGameDialog extends BaseDialog {
     public EndGameDialog(GameFrame game, boolean victory, String name, final String map, int waves, int kills) {
-        super(game, victory ? "Victory" : "Defeat", 460, 380);
+        super(game, victory ? "Victory" : "Defeat", 500, 380);
+        hideTitle();
         body.setLayout(null);
 
         JLabel result = GameConstants.makeImageLabel(victory ? "victory.png" : "defeat.png",
-                victory ? "VICTORY!" : "DEFEAT", GameConstants.GAME_FONT.deriveFont(Font.BOLD,44f),
-                victory ? GameConstants.GOLD : GameConstants.RED, 300, 60);
+                victory ? "VICTORY!" : "DEFEAT", GameConstants.HEADER_FONT,
+                victory ? GameConstants.GOLD : GameConstants.RED, 500, 60);
         result.setHorizontalAlignment(SwingConstants.CENTER);
-        result.setBounds(0, 12, 454, 62);
+        result.setBounds(0, 12, body.getWidth(), 80);
         body.add(result);
 
         String[] info = {
@@ -85,21 +86,30 @@ class EndGameDialog extends BaseDialog {
             "Mobs Killed: " + kills
         };
         for (int i = 0; i < info.length; i++) {
-            JLabel l = GameConstants.makeLabel(info[i], GameConstants.HEADER_FONT, GameConstants.TEXT);
+            JLabel l = GameConstants.makeLabel(info[i], GameConstants.NORMAL_FONT, GameConstants.TEXT);
             l.setHorizontalAlignment(SwingConstants.CENTER);
-            l.setBounds(0, 85 + i * 36, 454, 30);
+            l.setBounds(0, 85 + i * 36, body.getWidth(), 30);
             body.add(l);
         }
 
+        int bw = 160;
+        int bh = 44;
+        int gap = 30;
+
+        int totalW = bw * 2 + gap;
+
+        int startX = (body.getWidth() - totalW) / 2;
+
+
         JButton boardBtn = GameConstants.makeImageButton("btn_leaderboard.png", "Leaderboard", GameConstants.ORANGE, 160, 44, 16);
-        boardBtn.setBounds(50, 250, 160, 44);
+        boardBtn.setBounds(startX, 250, bw, bh);
         boardBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new LeaderboardDialog(EndGameDialog.this, map).setVisible(true);
             }
         });
         JButton menuBtn = GameConstants.makeImageButton("btn_menu.png", "Main Menu", GameConstants.BLUE, 160, 44, 16);
-        menuBtn.setBounds(244, 250, 160, 44);
+        menuBtn.setBounds(startX+bw+gap, 250, bw, bh);
         menuBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) { dispose(); }
         });
