@@ -48,6 +48,7 @@ public class GameConstants {
     public static final Color PURPLE = new Color(140, 90, 200);
     public static final Color GRAY   = new Color(95, 95, 120);
     public static final Color ORANGE = new Color(200, 140, 30);
+    public static final Color BROWN = new Color(120, 80, 45);
 
     // ---------- fonts ----------
     //use only 1 font pattern, use this instead of get font

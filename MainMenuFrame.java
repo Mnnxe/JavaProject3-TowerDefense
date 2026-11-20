@@ -59,7 +59,7 @@ public class MainMenuFrame extends JFrame {
         howBtn.setBounds(bx, by, bw, bh);
         creditBtn.setBounds(bx  + bw + gap, by, bw, bh);
         exitBtn.setBounds(bx + (bw + gap)*2, by, bw, bh);
-
+        
         playBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 SoundManager.playSFX("click");
@@ -70,31 +70,41 @@ public class MainMenuFrame extends JFrame {
         howBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 SoundManager.playSFX("click");
+                showDarkOverlay();
                 new HowToPlayDialog(MainMenuFrame.this).setVisible(true);
+                hideDarkOverlay();
             }
         });
         creditBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 SoundManager.playSFX("click");
+                showDarkOverlay();
                 new CreditDialog(MainMenuFrame.this).setVisible(true);
+                hideDarkOverlay();
             }
         });
         exitBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 SoundManager.playSFX("click");
+                showDarkOverlay();
                 new ExitDialog(MainMenuFrame.this).setVisible(true);
+                hideDarkOverlay();
             }
         });
         leaderBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 SoundManager.playSFX("click");
+                showDarkOverlay();
                 new LeaderboardDialog(MainMenuFrame.this, null).setVisible(true);
+                hideDarkOverlay();
             }
         });
         settingBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 SoundManager.playSFX("click");
+                showDarkOverlay();
                 new SettingDialog(MainMenuFrame.this).setVisible(true);
+                hideDarkOverlay();
             }
         });
 
@@ -104,10 +114,31 @@ public class MainMenuFrame extends JFrame {
         GameConstants.setupFrame(this, panel, null);
     }
 
+
     // square icon if PNG exists, otherwise a normal text button
     private JButton makeIconButton(String file, String text, Color bg) {
         if (GameConstants.hasImage(file)) return GameConstants.makeImageButton(file, text, bg, 56, 56, 14);
         return GameConstants.makeImageButton(file, text, bg, 140, 40, 14);
+    }
+
+    //dark overlay
+    private void showDarkOverlay() {
+        JPanel overlay = new JPanel() {
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                
+                g.setColor(new Color(0, 0, 0, 120));
+                g.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
+        
+        overlay.setOpaque(false);
+        setGlassPane(overlay);
+        overlay.setVisible(true);
+    }
+
+    private void hideDarkOverlay() {
+        getGlassPane().setVisible(false);
     }
 
     // ================= background of the menu =================

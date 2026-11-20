@@ -30,7 +30,7 @@ public class GetReadyFrame extends JFrame {
             public void windowClosing(WindowEvent e) { goBack(); }
         });
 
-        ImagePanel root = new ImagePanel("getready_bg.png", GameConstants.DARK_BG);
+        ImagePanel root = new ImagePanel("menu_bg.png", GameConstants.DARK_BG);
         root.setLayout(new BorderLayout(15, 15));
         root.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
         root.add(buildNamePanel(), BorderLayout.NORTH);
@@ -44,14 +44,14 @@ public class GetReadyFrame extends JFrame {
 
     // ================= sections =================
     private JPanel buildNamePanel() {
-        JPanel p = section("frame_name.png", null);
+        JPanel p = section("btn_yellow.png", null);
         p.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        p.add(GameConstants.makeLabel("Player Name:", GameConstants.HEADER_FONT, GameConstants.GOLD));
+        p.add(GameConstants.makeLabel("Player Name:", GameConstants.HEADER_FONT, GameConstants.BROWN));
 
         nameField = new JTextField(16);
         nameField.setFont(GameConstants.HEADER_FONT);
-        errorLabel = GameConstants.makeLabel(" ", GameConstants.BOLD_FONT, GameConstants.RED);
-        errorLabel.setPreferredSize(new Dimension(220, 25));   // fixed width -> layout does not jump
+        errorLabel = GameConstants.makeLabel(" ", GameConstants.NORMAL_FONT, GameConstants.RED);
+        errorLabel.setPreferredSize(new Dimension(230, 25));   // fixed width -> layout does not jump
 
         nameField.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
@@ -145,12 +145,18 @@ public class GetReadyFrame extends JFrame {
 
     // PNG frame if it exists, otherwise a gold titled border
     private JPanel section(String imageFile, String title) {
-        JPanel p = new ImagePanel(imageFile);
-        if (GameConstants.hasImage(imageFile)) {
-            p.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
-        } else if (title != null) {
-            p.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(GameConstants.GOLD, 2),
-                    title, TitledBorder.LEFT, TitledBorder.TOP, GameConstants.BOLD_FONT, GameConstants.GOLD));
+        JPanel p = new ImagePanel(new Color(255, 250, 220, 200));
+        if (title != null) {
+             p.setBorder(
+            BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(GameConstants.BROWN, 2),
+                title,
+                TitledBorder.LEFT,
+                TitledBorder.TOP,
+                GameConstants.BOLD_FONT,
+                GameConstants.BROWN
+            )
+        );
         }
         return p;
     }

@@ -11,29 +11,12 @@ import javax.swing.table.DefaultTableModel;
 // =====================================================================
 public class BaseDialog extends JDialog {
     protected JPanel body;
-    private Component oldGlassPane;
 
     public BaseDialog(Window owner, String title, int w, int h) {
         super(owner, title, Dialog.ModalityType.APPLICATION_MODAL);
         setUndecorated(true);
         setBackground(new Color(0,0,0,0));
         setSize(w, h);
-
-        if(owner instanceof JFrame){
-        JFrame frame = (JFrame) owner;
-        JPanel darkOverlay = new JPanel() {
-            protected void paintComponent(Graphics g) {
-                g.setColor(new Color(0, 0, 0, 120));
-                g.fillRect(0, 0, getWidth(), getHeight());
-            }
-        };
-
-         darkOverlay.setOpaque(false);
-
-        frame.setGlassPane(darkOverlay);
-        darkOverlay.setVisible(true);
-
-    }
 
         JPanel root = new JPanel();
         root.setLayout(null);
@@ -59,8 +42,10 @@ public class BaseDialog extends JDialog {
         titleLabel.setForeground(Color.BLACK);
         titleLabel.setBounds(titleX,titleY,titleW,titleH);
 
-        body = new ImagePanel(new Color(255, 255, 255, 220));        
+        body = new ImagePanel(new Color(255, 255, 255, 255));        
         body.setLayout(null);
+        body.setBorder(
+        BorderFactory.createLineBorder(Color.BLACK, 3));
         body.setBounds(bodyX, bodyY, bodyW, bodyH);
         
         int closeSize = 45;
@@ -87,13 +72,7 @@ public class BaseDialog extends JDialog {
         setLocationRelativeTo(owner);
     }
 
-    protected void onClose() {
-        if (getOwner() instanceof JFrame) {
-            ((JFrame) getOwner()).getGlassPane().setVisible(false);
-        }
-
-        dispose();
-    }
+    protected void onClose() { dispose(); }
 }
 
 // =====================================================================
