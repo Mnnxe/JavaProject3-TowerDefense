@@ -11,12 +11,29 @@ import javax.swing.table.DefaultTableModel;
 // =====================================================================
 public class BaseDialog extends JDialog {
     protected JPanel body;
+    private Component oldGlassPane;
 
     public BaseDialog(Window owner, String title, int w, int h) {
         super(owner, title, Dialog.ModalityType.APPLICATION_MODAL);
         setUndecorated(true);
         setBackground(new Color(0,0,0,0));
         setSize(w, h);
+
+        if(owner instanceof JFrame){
+        JFrame frame = (JFrame) owner;
+        JPanel darkOverlay = new JPanel() {
+            protected void paintComponent(Graphics g) {
+                g.setColor(new Color(0, 0, 0, 120));
+                g.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
+
+         darkOverlay.setOpaque(false);
+
+        frame.setGlassPane(darkOverlay);
+        darkOverlay.setVisible(true);
+
+    }
 
         JPanel root = new JPanel();
         root.setLayout(null);
@@ -70,7 +87,13 @@ public class BaseDialog extends JDialog {
         setLocationRelativeTo(owner);
     }
 
-    protected void onClose() { dispose(); }
+    protected void onClose() {
+        if (getOwner() instanceof JFrame) {
+            ((JFrame) getOwner()).getGlassPane().setVisible(false);
+        }
+
+        dispose();
+    }
 }
 
 // =====================================================================
@@ -136,14 +159,14 @@ class HowToPlayDialog extends BaseDialog {
 
 
         "1. Click a tower in the list at the bottom (or press 1-4).\n"
-      + "2. Move the mouse over the map: the attack range is shown.\n"
+      + "2. Move the mouse over the map\n"
       + "3. Click an empty tile to build.\n\n"
-      + "You cannot build on the path ('Not allowed') "
-      + "or without enough coins ('Can't afford').\n\n"
-      + "Archer (50c) - single target, wave 1+\n"
-      + "Cannon (80c) - splash damage 1 grid, wave 2+\n"
-      + "Ice (100c) - slows enemies, wave 3+\n"
-      + "Fire (130c) - burns enemies over time, wave 4+",
+      + "You cannot build on the path"
+      + "or without enough coins\n\n"
+      + "Archer (50c) - single target\n"
+      + "Cannon (80c) - splash damage 1 grid\n"
+      + "Ice (100c) - slows enemies\n"
+      + "Fire (130c) - burns enemies over time",
 
 
         "UPGRADE: click a tower that is already on the map (max Lv.3).\n\n"
@@ -161,15 +184,6 @@ class HowToPlayDialog extends BaseDialog {
       + "ESC / Right click - cancel selection\n\n"
       + "Speed box: play at x1 or x2 speed.",
 
-
-        "Goblin - normal (60 HP)\n"
-      + "Wolf - fast (50 HP)\n"
-      + "Bat - swarm (40 HP)\n"
-      + "Golem - tank (220 HP)\n"
-      + "Mini Boss - wave 5 (1,000 HP)\n"
-      + "Boss - wave 10 (2,800 HP)\n\n"
-      + "Killed mobs drop coins only - protect your castle HP!\n"
-      + "Play any basic map to unlock the 2 special maps..."
     };
 
 
@@ -205,20 +219,20 @@ class HowToPlayDialog extends BaseDialog {
         textArea.setWrapStyleWord(true);
 
         // ใช้ custom font
-        textArea.setFont(GameConstants.getFont("PixelFont.ttf",15));
+        textArea.setFont(GameConstants.GAME_FONT.deriveFont(Font.BOLD, (float) 16));
         textArea.setForeground(GameConstants.TEXT);
 
         // สำคัญ:
         // ทำให้พื้นหลัง JTextArea โปร่งใส
         // จะได้เห็น howto_bg.png ข้างหลัง
         textArea.setOpaque(false);
-        textArea.setBounds(55, 85,450, 220);
+        textArea.setBounds(55, 85,450, 250);
         body.add(textArea);
 
         int sizebtn = 30;
         // ================= PREVIOUS =================
         prevBtn = GameConstants.makeImageButton("btn_prev.png","",GameConstants.BLUE,sizebtn, sizebtn,14);
-        prevBtn.setBounds(60, 320, sizebtn, sizebtn);
+        prevBtn.setBounds(60, 350, sizebtn, sizebtn);
         prevBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 changePage(-1);
@@ -231,14 +245,13 @@ class HowToPlayDialog extends BaseDialog {
         // ================= PAGE NUMBER =================
         pageNumber = GameConstants.makeLabel("",GameConstants.BOLD_FONT,GameConstants.TEXT);
         pageNumber.setHorizontalAlignment(SwingConstants.CENTER);
-        pageNumber.setBounds(200, 325,160, 30);
+        pageNumber.setBounds(200, 350,160, 30);
         body.add(pageNumber);
 
 
         // ================= NEXT =================
         nextBtn = GameConstants.makeImageButton("btn_next.png","",GameConstants.BLUE,sizebtn,sizebtn,14);
-
-        nextBtn.setBounds(450, 320, sizebtn, sizebtn);
+        nextBtn.setBounds(450, 350, sizebtn, sizebtn);
 
         nextBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -288,13 +301,19 @@ class HowToPlayDialog extends BaseDialog {
 //  CreditDialog : credits.png (must contain names + IDs), or text fallback
 // =====================================================================
 class CreditDialog extends BaseDialog {
-     public CreditDialog(Window owner) {
+    
+    private static final String[][] MEMBERS = {
+        {"6813115", "Renuka",     "Choosingkae"},
+        {"6813238", "Napat",      "Chonsaktrakul"},
+        {"6813248", "Pimpichcha", "Saengngoen"},
+        {"6813258", "Sittichok",  "Boonthittanont"},
+    };
 
-        super(owner,"CREDITS",460,260);
-
+    public CreditDialog(Window owner) {
+        
+        super(owner,"CREDITS",580,260);
         body.setLayout(null);
 
-        String[][] m = GameConstants.MEMBERS;
 
 /*
 // =========================
@@ -323,15 +342,20 @@ body.add(head);
         // MEMBERS
         // =========================
         int y = 50;
+        
 
-        for (String[] member : m) {
+        for (String[] member : MEMBERS) {
 
-            JLabel memberLabel = GameConstants.makeLabel(member[0] + "     " + member[1],GameConstants.BOLD_FONT,GameConstants.TEXT);
-            memberLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            memberLabel.setBounds(20, y,360, 25);
+            String text = String.format("%-7s %-10s %-15s",member[0],member[1],member[2]);
+
+            JLabel memberLabel = GameConstants.makeLabel(text,GameConstants.BOLD_FONT,GameConstants.TEXT);
+            memberLabel.setHorizontalAlignment(SwingConstants.LEFT);
+            memberLabel.setBounds(50, y,500, 25);
             body.add(memberLabel);
             y += 30;
         }
+
+        
 
 /*
 // =========================
@@ -457,7 +481,7 @@ class SettingDialog extends BaseDialog {
 // =====================================================================
 class LeaderboardDialog extends BaseDialog {
     public LeaderboardDialog(Window owner, String selectMap) {
-        super(owner,"LEADERBOARD",660,440);
+        super(owner,"LEADERBOARD",800,440);
         body.setLayout(null);
 
 
@@ -467,7 +491,7 @@ class LeaderboardDialog extends BaseDialog {
         JTabbedPane tabs = new JTabbedPane();
 
         tabs.setFont(GameConstants.BOLD_FONT);
-        tabs.setBounds(35, 55,530, 290);
+        tabs.setBounds(35, 55, body.getWidth() - 60, 290);
 
         // =========================
         // MAP TABS

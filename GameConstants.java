@@ -34,13 +34,8 @@ public class GameConstants {
     public static final int NAME_MAX_LENGTH = 15;
 
     // ---------- group members (shown in Credits) ---------- //change to insert picture
-    public static final String[][] MEMBERS = {
-        {"6813115", "Renuka      Choosingkae"},
-        {"6813238", "Napat       Chonsaktrakul"},
-        {"6813248", "Pimpichcha  Saengngoen"},
-        {"6813258", "Sittichok   Boonthittanont"},
-    };
-
+    //move to BaseDialog
+    
     // ---------- colours ----------
     public static final Color DARK_BG   = new Color(28, 32, 48);
     public static final Color PANEL_BG  = new Color(42, 48, 72);
@@ -55,10 +50,23 @@ public class GameConstants {
     public static final Color ORANGE = new Color(200, 140, 30);
 
     // ---------- fonts ----------
-    public static final Font TITLE_FONT  = new Font("SansSerif", Font.BOLD, 52);
-    public static final Font HEADER_FONT = new Font("SansSerif", Font.BOLD, 22);
-    public static final Font NORMAL_FONT = new Font("SansSerif", Font.PLAIN, 15);
-    public static final Font BOLD_FONT   = new Font("SansSerif", Font.BOLD, 15);
+    //use only 1 font pattern, use this instead of get font
+    private static Font loadGameFont() {
+        try {
+            return Font.createFont(Font.TRUETYPE_FONT, new File(PATH + "LcdSolid-VPzB.ttf"));
+            
+        } catch (Exception e) {
+            System.out.println("Cannot load game font");
+            return new Font("SansSerif",Font.PLAIN,16);
+        }
+    }
+
+    public static final Font GAME_FONT = loadGameFont();
+
+    public static final Font TITLE_FONT = GAME_FONT.deriveFont(Font.BOLD, 52f);
+    public static final Font HEADER_FONT = GAME_FONT.deriveFont(Font.BOLD, 25f);
+    public static final Font NORMAL_FONT = GAME_FONT.deriveFont(Font.PLAIN, 18f);
+    public static final Font BOLD_FONT = GAME_FONT.deriveFont(Font.BOLD, 18f);
 
     // ================= frame helper =================
     // Gives every frame the SAME size. If sameSpotAs is visible, the new frame opens at the same place.
@@ -70,24 +78,25 @@ public class GameConstants {
         if (sameSpotAs != null && sameSpotAs.isShowing()) frame.setLocation(sameSpotAs.getLocation());
         else frame.setLocationRelativeTo(null);
     }
-
-    public static Font getFont(String fileName, float size) {
+/*
+public static Font getFont(String fileName, float size) {
     try {
         File file = new File(PATH + fileName);
-
+        
         if (!file.exists()) {
             System.out.println("Font not found: " + fileName);
             return new Font("SansSerif", Font.BOLD, (int) size);
         }
-
+        
         Font font = Font.createFont(Font.TRUETYPE_FONT,file);
         return font.deriveFont(size);
-
+        
     } catch (Exception e) {
         e.printStackTrace();
         return new Font("SansSerif",Font.BOLD,(int) size);
     }
 }
+*/
 
     // ================= images =================
     // Each image is loaded once. Returns null if the file is missing -> caller uses default drawing.
@@ -129,7 +138,7 @@ public class GameConstants {
     // ================= component helpers =================
     public static JButton makeButton(String text, Color bg, int fontSize) {
         JButton b = new JButton(text);
-        b.setFont(new Font("SansSerif", Font.BOLD, fontSize));
+        b.setFont(GAME_FONT.deriveFont(Font.BOLD, (float) fontSize));
         b.setBackground(bg);
         b.setForeground(Color.WHITE);
         b.setOpaque(true);
@@ -154,6 +163,8 @@ public class GameConstants {
         } else {
             b = new JButton(text, icon);
 
+    
+        b.setFont(GAME_FONT.deriveFont(Font.BOLD, (float) fontSize));
         // ให้ text อยู่ทับตรงกลาง PNG
         b.setHorizontalTextPosition(SwingConstants.CENTER);
         b.setVerticalTextPosition(SwingConstants.CENTER);
@@ -172,9 +183,7 @@ public class GameConstants {
         // =========================
         ImageIcon pressed = getIcon(fileName.replace(".png", "_pressed.png"),w, h);
 
-        if (pressed != null) {
-            b.setPressedIcon(pressed);
-        }
+        if (pressed != null) {b.setPressedIcon(pressed);}
 
         // เอาหน้าตา JButton ปกติออก
         b.setBorderPainted(false);

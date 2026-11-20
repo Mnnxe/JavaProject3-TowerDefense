@@ -26,7 +26,7 @@ public class MainMenuFrame extends JFrame {
             int w = 680;
             int h = 250;
             JLabel title = new JLabel(GameConstants.getIcon("title.png", w,h));
-            title.setBounds(W /4, 40, w, h);
+            title.setBounds(0, 60, w, h);
             panel.add(title);
         }
 
@@ -42,10 +42,10 @@ public class MainMenuFrame extends JFrame {
         int pw = 325-80, ph = 105-15;
         int bw = 220-80, bh = 69-15;
         int gap = 10;
-        JButton playBtn   = GameConstants.makeImageButton("btn_yellow.png", "PLAY", GameConstants.GREEN, pw, ph, 26);
-        JButton howBtn    = GameConstants.makeImageButton("btn_white.png", "HOW TO PLAY", GameConstants.BLUE, bw, bh, 18);
-        JButton creditBtn = GameConstants.makeImageButton("btn_white.png", "CREDITS", GameConstants.PURPLE, bw, bh, 18);
-        JButton exitBtn   = GameConstants.makeImageButton("btn_white.png", "EXIT", GameConstants.RED, bw, bh, 18);
+        JButton playBtn   = GameConstants.makeImageButton("btn_yellow.png", "PLAY", GameConstants.GREEN, pw, ph, 50);
+        JButton howBtn    = GameConstants.makeImageButton("btn_white.png", "HOW TO PLAY", GameConstants.BLUE, bw, bh, 17);
+        JButton creditBtn = GameConstants.makeImageButton("btn_white.png", "CREDITS", GameConstants.PURPLE, bw, bh, 17);
+        JButton exitBtn   = GameConstants.makeImageButton("btn_white.png", "EXIT", GameConstants.RED, bw, bh, 17);
         
         // Play button
         int playX = (W - pw) / 4;
@@ -146,7 +146,7 @@ public class MainMenuFrame extends JFrame {
             g2.setColor(GameConstants.GOLD);
             g2.drawString(t, tx, 140);
 
-            g2.setFont(new Font("SansSerif", Font.BOLD | Font.ITALIC, 24));
+            g2.setFont( GameConstants.GAME_FONT.deriveFont(Font.BOLD, (float) 25));
             fm = g2.getFontMetrics();
             String s = "~ Professor Edition ~";
             g2.setColor(Color.WHITE);
