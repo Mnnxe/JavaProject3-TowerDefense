@@ -1,10 +1,8 @@
-// Group members: 6xxxxxxx Firstname Lastname 1, 6xxxxxxx Firstname Lastname 2,
-//                6xxxxxxx Firstname Lastname 3, 6xxxxxxx Firstname Lastname 4,
-//                6xxxxxxx Firstname Lastname 5
 package JavaProject3_TowerDefense;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.InputStream;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -37,11 +35,10 @@ public class GameConstants {
 
     // ---------- group members (shown in Credits) ---------- //change to insert picture
     public static final String[][] MEMBERS = {
-        {"6xxxxxxx", "Firstname Lastname 1"},
-        {"6xxxxxxx", "Firstname Lastname 2"},
-        {"6xxxxxxx", "Firstname Lastname 3"},
-        {"6xxxxxxx", "Firstname Lastname 4"},
-        {"6xxxxxxx", "Firstname Lastname 5"}
+        {"6813115", "Renuka      Choosingkae"},
+        {"6813238", "Napat       Chonsaktrakul"},
+        {"6813248", "Pimpichcha  Saengngoen"},
+        {"6813258", "Sittichok   Boonthittanont"},
     };
 
     // ---------- colours ----------
@@ -49,7 +46,7 @@ public class GameConstants {
     public static final Color PANEL_BG  = new Color(42, 48, 72);
     public static final Color HEADER_BG = new Color(60, 68, 100);
     public static final Color GOLD   = new Color(255, 200, 60);
-    public static final Color TEXT   = new Color(235, 235, 245);
+    public static final Color TEXT   = new Color(0, 0, 0);
     public static final Color RED    = new Color(215, 70, 70);
     public static final Color GREEN  = new Color(70, 180, 100);
     public static final Color BLUE   = new Color(70, 125, 215);
@@ -73,6 +70,24 @@ public class GameConstants {
         if (sameSpotAs != null && sameSpotAs.isShowing()) frame.setLocation(sameSpotAs.getLocation());
         else frame.setLocationRelativeTo(null);
     }
+
+    public static Font getFont(String fileName, float size) {
+    try {
+        File file = new File(PATH + fileName);
+
+        if (!file.exists()) {
+            System.out.println("Font not found: " + fileName);
+            return new Font("SansSerif", Font.BOLD, (int) size);
+        }
+
+        Font font = Font.createFont(Font.TRUETYPE_FONT,file);
+        return font.deriveFont(size);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return new Font("SansSerif",Font.BOLD,(int) size);
+    }
+}
 
     // ================= images =================
     // Each image is loaded once. Returns null if the file is missing -> caller uses default drawing.
@@ -102,6 +117,15 @@ public class GameConstants {
         return new ImageIcon(img.getScaledInstance(w, h, Image.SCALE_SMOOTH));
     }
 
+    public static ImageIcon getIcon(String fileName) {
+        BufferedImage img = getImage(fileName);
+        if (img == null) {
+            return null;
+        }
+        return new ImageIcon(img);
+    }
+
+
     // ================= component helpers =================
     public static JButton makeButton(String text, Color bg, int fontSize) {
         JButton b = new JButton(text);
@@ -128,16 +152,43 @@ public class GameConstants {
         if (icon == null) {
             b = makeButton(text, bg, fontSize);
         } else {
-            b = new JButton(icon);
-            ImageIcon hover = getIcon(fileName.replace(".png", "_hover.png"), w, h);
-            if (hover != null) b.setRolloverIcon(hover);
-            b.setToolTipText(text);
-            b.setBorderPainted(false);
-            b.setContentAreaFilled(false);
-            b.setFocusPainted(false);
-            b.setFocusable(false);
-            b.setMargin(new Insets(0, 0, 0, 0));
-            b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            b = new JButton(text, icon);
+
+        // ให้ text อยู่ทับตรงกลาง PNG
+        b.setHorizontalTextPosition(SwingConstants.CENTER);
+        b.setVerticalTextPosition(SwingConstants.CENTER);
+        // สีข้อความ
+        b.setForeground(Color.BLACK);
+
+        // =========================
+        // Hover PNG
+        // =========================
+        ImageIcon hover = getIcon(fileName.replace(".png", "_hover.png"),w, h);
+        if (hover != null) {
+            b.setRolloverIcon(hover);
+        }
+        // =========================
+        // Pressed PNG
+        // =========================
+        ImageIcon pressed = getIcon(fileName.replace(".png", "_pressed.png"),w, h);
+
+        if (pressed != null) {
+            b.setPressedIcon(pressed);
+        }
+
+        // เอาหน้าตา JButton ปกติออก
+        b.setBorderPainted(false);
+        b.setContentAreaFilled(false);
+        b.setFocusPainted(false);
+        b.setFocusable(false);
+
+        b.setMargin(new Insets(0, 0, 0, 0));
+
+        b.setCursor(
+            new Cursor(Cursor.HAND_CURSOR)
+        );
+
+        b.setToolTipText(text);
         }
         b.setPreferredSize(new Dimension(w, h));
         return b;
@@ -178,13 +229,20 @@ class ImagePanel extends JPanel {
         this.imageFile = imageFile;
         this.top = top;
         this.bottom = bottom;
+
         if (top != null) setBackground(top);
-        setOpaque(top != null || GameConstants.hasImage(imageFile));
+        if (top != null && top.getAlpha() < 255) {
+            setOpaque(false);
+        } else {
+            setOpaque(top != null || GameConstants.hasImage(imageFile));
+        }
     }
 
     public ImagePanel(String imageFile, Color solid) { this(imageFile, solid, solid); }
     public ImagePanel(String imageFile) { this(imageFile, null, null); }
+    public ImagePanel(Color solid) { this (null, solid, solid); }
 
+    @Override 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;

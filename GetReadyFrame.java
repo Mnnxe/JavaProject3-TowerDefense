@@ -130,8 +130,8 @@ public class GetReadyFrame extends JFrame {
     private JPanel buildButtonPanel() {
         JPanel p = new JPanel(new BorderLayout());
         p.setOpaque(false);
-        JButton backBtn = GameConstants.makeImageButton("btn_back.png", "< Back", GameConstants.RED, 160, 50, 18);
-        JButton startBtn = GameConstants.makeImageButton("btn_start.png", "Start >", GameConstants.GREEN, 160, 50, 18);
+        JButton backBtn = GameConstants.makeImageButton("btn_yellow.png", "BACK", GameConstants.RED, 160, 50, 18);
+        JButton startBtn = GameConstants.makeImageButton("btn_yellow.png", "START", GameConstants.GREEN, 160, 50, 18);
         backBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) { goBack(); }
         });

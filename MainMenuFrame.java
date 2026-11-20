@@ -1,6 +1,3 @@
-// Group members: 6xxxxxxx Firstname Lastname 1, 6xxxxxxx Firstname Lastname 2,
-//                6xxxxxxx Firstname Lastname 3, 6xxxxxxx Firstname Lastname 4,
-//                6xxxxxxx Firstname Lastname 5
 package JavaProject3_TowerDefense;
 import java.awt.*;
 import java.awt.event.*;
@@ -26,28 +23,42 @@ public class MainMenuFrame extends JFrame {
 
         // ---- title picture (if title.png exists, otherwise MenuPanel draws text) ----
         if (GameConstants.hasImage("title.png")) {
-            JLabel title = new JLabel(GameConstants.getIcon("title.png", 640, 170));
-            title.setBounds((W - 640) / 2, 40, 640, 170);
+            int w = 680;
+            int h = 250;
+            JLabel title = new JLabel(GameConstants.getIcon("title.png", w,h));
+            title.setBounds(W /4, 40, w, h);
             panel.add(title);
         }
 
         // ---- icon buttons (top-right) ----
-        JButton settingBtn = makeIconButton("icon_setting.png", "Settings", GameConstants.GRAY);
-        JButton leaderBtn = makeIconButton("icon_leaderboard.png", "Leaderboard", GameConstants.ORANGE);
+        JButton settingBtn = makeIconButton("icon_setting.png", "", GameConstants.GRAY);
+        JButton leaderBtn = makeIconButton("icon_leaderboard.png", "", GameConstants.ORANGE);
         Dimension s = settingBtn.getPreferredSize(), l = leaderBtn.getPreferredSize();
         settingBtn.setBounds(W - 20 - s.width, 15, s.width, s.height);
         leaderBtn.setBounds(W - 30 - s.width - l.width, 15, l.width, l.height);
 
         // ---- main buttons ----
-        int bw = 280, bx = (W - bw) / 2;
-        JButton playBtn   = GameConstants.makeImageButton("btn_play.png", "PLAY", GameConstants.GREEN, bw, 66, 26);
-        JButton howBtn    = GameConstants.makeImageButton("btn_howtoplay.png", "HOW TO PLAY", GameConstants.BLUE, bw, 52, 18);
-        JButton creditBtn = GameConstants.makeImageButton("btn_credits.png", "CREDITS", GameConstants.PURPLE, bw, 52, 18);
-        JButton exitBtn   = GameConstants.makeImageButton("btn_exit.png", "EXIT", GameConstants.RED, bw, 52, 18);
-        playBtn.setBounds(bx, 265, bw, 66);
-        howBtn.setBounds(bx, 345, bw, 52);
-        creditBtn.setBounds(bx, 410, bw, 52);
-        exitBtn.setBounds(bx, 475, bw, 52);
+        
+        int pw = 325-80, ph = 105-15;
+        int bw = 220-80, bh = 69-15;
+        int gap = 10;
+        JButton playBtn   = GameConstants.makeImageButton("btn_yellow.png", "PLAY", GameConstants.GREEN, pw, ph, 26);
+        JButton howBtn    = GameConstants.makeImageButton("btn_white.png", "HOW TO PLAY", GameConstants.BLUE, bw, bh, 18);
+        JButton creditBtn = GameConstants.makeImageButton("btn_white.png", "CREDITS", GameConstants.PURPLE, bw, bh, 18);
+        JButton exitBtn   = GameConstants.makeImageButton("btn_white.png", "EXIT", GameConstants.RED, bw, bh, 18);
+        
+        // Play button
+        int playX = (W - pw) / 4;
+        int playY = (H/2)+50;
+        playBtn.setBounds(playX, playY, pw, ph);
+
+        // Other buttons
+        //int totalWidth = (bw * 3) + (gap * 2);
+        int bx = 100;
+        int by = playBtn.getY() + ph + 30;
+        howBtn.setBounds(bx, by, bw, bh);
+        creditBtn.setBounds(bx  + bw + gap, by, bw, bh);
+        exitBtn.setBounds(bx + (bw + gap)*2, by, bw, bh);
 
         playBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

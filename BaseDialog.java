@@ -1,6 +1,3 @@
-// Group members: 6xxxxxxx Firstname Lastname 1, 6xxxxxxx Firstname Lastname 2,
-//                6xxxxxxx Firstname Lastname 3, 6xxxxxxx Firstname Lastname 4,
-//                6xxxxxxx Firstname Lastname 5
 package JavaProject3_TowerDefense;
 import java.awt.*;
 import java.awt.event.*;
@@ -15,32 +12,60 @@ import javax.swing.table.DefaultTableModel;
 public class BaseDialog extends JDialog {
     protected JPanel body;
 
-    public BaseDialog(Window owner, String title, int w, int h, String bgImage) {
+    public BaseDialog(Window owner, String title, int w, int h) {
         super(owner, title, Dialog.ModalityType.APPLICATION_MODAL);
         setUndecorated(true);
+        setBackground(new Color(0,0,0,0));
         setSize(w, h);
 
-        JPanel root = new JPanel(new BorderLayout());
-        root.setBackground(GameConstants.DARK_BG);
-        root.setBorder(BorderFactory.createLineBorder(GameConstants.GOLD, 3));
+        JPanel root = new JPanel();
+        root.setLayout(null);
+        root.setOpaque(false);
 
-        JPanel header = new ImagePanel("dialog_header.png", GameConstants.HEADER_BG);
-        header.setLayout(new BorderLayout());
-        JLabel titleLabel = GameConstants.makeLabel("  " + title, GameConstants.HEADER_FONT, GameConstants.GOLD);
-        JButton closeBtn = GameConstants.makeImageButton("btn_close.png", "X", GameConstants.RED, 40, 34, 14);
+        int bodyX = 30;
+        int bodyY = 35;
+
+        int bodyW = w - 60;
+        int bodyH = h - 65;
+
+        int titleW = 220;
+        int titleH = 60;
+
+        int titleX = bodyX + (bodyW - titleW) / 2;
+        int titleY = 5;
+
+        ImageIcon titleIcon = GameConstants.getIcon("btn_yellow.png", 220, 60);
+        JLabel titleLabel = new JLabel(title,titleIcon,SwingConstants.CENTER);
+        titleLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+        titleLabel.setVerticalTextPosition(SwingConstants.CENTER);
+        titleLabel.setFont(GameConstants.HEADER_FONT);
+        titleLabel.setForeground(Color.BLACK);
+        titleLabel.setBounds(titleX,titleY,titleW,titleH);
+
+        body = new ImagePanel(new Color(255, 255, 255, 220));        
+        body.setLayout(null);
+        body.setBounds(bodyX, bodyY, bodyW, bodyH);
+        
+        int closeSize = 45;
+        JButton closeBtn = GameConstants.makeImageButton("btn_close.png","",GameConstants.RED,45, 45,14);
+        closeBtn.setBounds(bodyX + bodyW - closeSize / 2,bodyY - closeSize / 2,closeSize,closeSize);        
         closeBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                SoundManager.playSFX("click");
-                onClose();
+                public void actionPerformed(ActionEvent e) {
+                    SoundManager.playSFX("click");
+                    onClose();
+                }
             }
-        });
-        header.add(titleLabel, BorderLayout.WEST);
-        header.add(closeBtn, BorderLayout.EAST);
+        );
 
-        body = new ImagePanel(bgImage, GameConstants.DARK_BG);
+        root.add(titleLabel);
+        root.add(closeBtn);
+        root.add(body);
 
-        root.add(header, BorderLayout.NORTH);
-        root.add(body, BorderLayout.CENTER);
+         root.setComponentZOrder(closeBtn, 0);
+        root.setComponentZOrder(titleLabel, 1);
+        root.setComponentZOrder(body, 2);
+
+
         setContentPane(root);
         setLocationRelativeTo(owner);
     }
@@ -53,15 +78,17 @@ public class BaseDialog extends JDialog {
 // =====================================================================
 class ExitDialog extends BaseDialog {
     public ExitDialog(Window owner) {
-        super(owner, "Exit", 380, 200, "exit_bg.png");
+        super(owner, "Exit", 480, 260);
         body.setLayout(null);
 
         JLabel q = GameConstants.makeLabel("Quit this game?", GameConstants.HEADER_FONT, GameConstants.TEXT);
         q.setHorizontalAlignment(SwingConstants.CENTER);
-        q.setBounds(0, 25, 374, 30);
+        q.setBounds(0, 30, body.getWidth(), 50);
+
+        int startX = 100;
 
         JButton yes = GameConstants.makeImageButton("btn_yes.png", "Yes", GameConstants.RED, 100, 40, 16);
-        yes.setBounds(70, 85, 100, 40);
+        yes.setBounds(startX, 100, 100, 40);
         yes.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 SoundManager.stopBGM();
@@ -70,9 +97,12 @@ class ExitDialog extends BaseDialog {
         });
 
         JButton no = GameConstants.makeImageButton("btn_no.png", "No", GameConstants.BLUE, 100, 40, 16);
-        no.setBounds(205, 85, 100, 40);
+        no.setBounds(startX+yes.getWidth()+20, 100, 100, 40);
         no.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { dispose(); }
+            public void actionPerformed(ActionEvent e) { 
+                SoundManager.playSFX("click");
+                onClose();
+            }
         });
 
         body.add(q);
@@ -86,9 +116,17 @@ class ExitDialog extends BaseDialog {
 //  Uses howto_1.png ... howto_5.png. If a picture is missing -> text page.
 // =====================================================================
 class HowToPlayDialog extends BaseDialog {
-    private static final int IMG_W = 576, IMG_H = 320;
-    private static final String[] TITLES = {"Goal", "Building Towers", "Upgrade & Sell", "Controls", "Enemies"};
+
+    private static final String[] TITLES = {
+        "Goal",
+        "Building Towers",
+        "Upgrade & Sell",
+        "Controls",
+        "Enemies"
+    };
+
     private static final String[] PAGES = {
+
         "Mobs walk along the path from the purple portal to your castle.\n\n"
       + "- Every mob that reaches the castle takes away base HP.\n"
       + "- Base HP starts at 100 and can NOT be recovered.\n"
@@ -96,117 +134,153 @@ class HowToPlayDialog extends BaseDialog {
       + "- Survive all 10 waves -> VICTORY!\n\n"
       + "Wave 5 has a Mini Boss and wave 10 has the Final Boss.",
 
+
         "1. Click a tower in the list at the bottom (or press 1-4).\n"
       + "2. Move the mouse over the map: the attack range is shown.\n"
       + "3. Click an empty tile to build.\n\n"
-      + "You cannot build on the path ('Not allowed') or without enough coins ('Can't afford').\n\n"
-      + "Archer (50c)  - single target, wave 1+\n"
-      + "Cannon (80c)  - splash damage 1 grid, wave 2+\n"
-      + "Ice (100c)    - slows enemies, wave 3+\n"
-      + "Fire (130c)   - burns enemies over time, wave 4+",
+      + "You cannot build on the path ('Not allowed') "
+      + "or without enough coins ('Can't afford').\n\n"
+      + "Archer (50c) - single target, wave 1+\n"
+      + "Cannon (80c) - splash damage 1 grid, wave 2+\n"
+      + "Ice (100c) - slows enemies, wave 3+\n"
+      + "Fire (130c) - burns enemies over time, wave 4+",
+
 
         "UPGRADE: click a tower that is already on the map (max Lv.3).\n\n"
       + "SELL: turn on 'Deconstruct' (or press S), then click a tower.\n"
       + "You get back 70% of all coins you spent on that tower.\n\n"
       + "IMPORTANT: once a wave starts you cannot build, upgrade or sell.\n\n"
-      + "Coins: start with 150, earn from kills, and get 30 + (wave x 5) bonus after each wave.",
+      + "Coins: start with 150, earn from kills, and get "
+      + "30 + (wave x 5) bonus after each wave.",
 
-        "SPACE          - start next wave\n"
-      + "P              - pause menu\n"
-      + "1 / 2 / 3 / 4  - select Archer / Cannon / Ice / Fire\n"
-      + "S              - toggle deconstruct mode\n"
+
+        "SPACE - start next wave\n"
+      + "P - pause menu\n"
+      + "1 / 2 / 3 / 4 - select Archer / Cannon / Ice / Fire\n"
+      + "S - toggle deconstruct mode\n"
       + "ESC / Right click - cancel selection\n\n"
       + "Speed box: play at x1 or x2 speed.",
 
-        "Goblin  - normal          (60 HP)\n"
-      + "Wolf    - fast            (50 HP)\n"
-      + "Bat     - swarm           (40 HP)\n"
-      + "Golem   - tank            (220 HP)\n"
-      + "Mini Boss (wave 5)        (1,000 HP)\n"
-      + "Boss      (wave 10)       (2,800 HP)\n\n"
+
+        "Goblin - normal (60 HP)\n"
+      + "Wolf - fast (50 HP)\n"
+      + "Bat - swarm (40 HP)\n"
+      + "Golem - tank (220 HP)\n"
+      + "Mini Boss - wave 5 (1,000 HP)\n"
+      + "Boss - wave 10 (2,800 HP)\n\n"
       + "Killed mobs drop coins only - protect your castle HP!\n"
-      + "Play any basic map to unlock the 2 special maps... the professors are waiting!"
+      + "Play any basic map to unlock the 2 special maps..."
     };
 
+
     private int page = 0;
-    private JLabel pageTitle, pageNumber, pageImage;
+
+    private JLabel pageTitle;
+    private JLabel pageNumber;
+
     private JTextArea textArea;
-    private JScrollPane textScroll;
-    private JPanel center;
-    private JButton prevBtn, nextBtn;
+
+    private JButton prevBtn;
+    private JButton nextBtn;
+
 
     public HowToPlayDialog(Window owner) {
-        super(owner, "How to Play", 620, 460, "howto_bg.png");
-        body.setLayout(new BorderLayout(10, 10));
-        body.setBorder(BorderFactory.createEmptyBorder(10, 20, 15, 20));
 
-        pageTitle = GameConstants.makeLabel("", GameConstants.HEADER_FONT, GameConstants.GOLD);
+        // howto_bg.png = รูปพื้นหลังของ body
+        super(owner,"HOW TO PLAY",620,460);
 
-        // picture page
-        pageImage = new JLabel();
-        pageImage.setHorizontalAlignment(SwingConstants.CENTER);
+        // ================= PAGE TITLE =================
+        pageTitle = GameConstants.makeLabel("",GameConstants.HEADER_FONT,GameConstants.TEXT);
+        pageTitle.setBounds(0, 35, body.getWidth(), 35);
+        pageTitle.setHorizontalAlignment(SwingConstants.CENTER);
+        body.add(pageTitle);
 
-        // text page (fallback)
+        // ================= TEXT =================
         textArea = new JTextArea();
+
         textArea.setEditable(false);
+        textArea.setFocusable(false);
+
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
-        textArea.setFont(new Font("Monospaced", Font.PLAIN, 15));
-        textArea.setBackground(GameConstants.PANEL_BG);
+
+        // ใช้ custom font
+        textArea.setFont(GameConstants.getFont("PixelFont.ttf",15));
         textArea.setForeground(GameConstants.TEXT);
-        textArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        textScroll = new JScrollPane(textArea);
 
-        center = new JPanel(new BorderLayout());
-        center.setOpaque(false);
+        // สำคัญ:
+        // ทำให้พื้นหลัง JTextArea โปร่งใส
+        // จะได้เห็น howto_bg.png ข้างหลัง
+        textArea.setOpaque(false);
+        textArea.setBounds(55, 85,450, 220);
+        body.add(textArea);
 
-        prevBtn = GameConstants.makeImageButton("btn_prev.png", "< Previous", GameConstants.BLUE, 130, 38, 14);
-        nextBtn = GameConstants.makeImageButton("btn_next.png", "Next >", GameConstants.BLUE, 130, 38, 14);
-        pageNumber = GameConstants.makeLabel("", GameConstants.BOLD_FONT, GameConstants.TEXT);
-        pageNumber.setHorizontalAlignment(SwingConstants.CENTER);
-
+        int sizebtn = 30;
+        // ================= PREVIOUS =================
+        prevBtn = GameConstants.makeImageButton("btn_prev.png","",GameConstants.BLUE,sizebtn, sizebtn,14);
+        prevBtn.setBounds(60, 320, sizebtn, sizebtn);
         prevBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { changePage(-1); }
+            public void actionPerformed(ActionEvent e) {
+                changePage(-1);
+            }
         });
+
+        body.add(prevBtn);
+
+
+        // ================= PAGE NUMBER =================
+        pageNumber = GameConstants.makeLabel("",GameConstants.BOLD_FONT,GameConstants.TEXT);
+        pageNumber.setHorizontalAlignment(SwingConstants.CENTER);
+        pageNumber.setBounds(200, 325,160, 30);
+        body.add(pageNumber);
+
+
+        // ================= NEXT =================
+        nextBtn = GameConstants.makeImageButton("btn_next.png","",GameConstants.BLUE,sizebtn,sizebtn,14);
+
+        nextBtn.setBounds(450, 320, sizebtn, sizebtn);
+
         nextBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { changePage(1); }
+            public void actionPerformed(ActionEvent e) {
+                changePage(1);
+            }
         });
 
-        JPanel bottom = new JPanel(new BorderLayout());
-        bottom.setOpaque(false);
-        bottom.add(prevBtn, BorderLayout.WEST);
-        bottom.add(pageNumber, BorderLayout.CENTER);
-        bottom.add(nextBtn, BorderLayout.EAST);
-
-        body.add(pageTitle, BorderLayout.NORTH);
-        body.add(center, BorderLayout.CENTER);
-        body.add(bottom, BorderLayout.SOUTH);
+        body.add(nextBtn);
+        // แสดงหน้าแรก
         showPage();
     }
 
+
+    // ================= CHANGE PAGE =================
     private void changePage(int d) {
-        page = Math.max(0, Math.min(PAGES.length - 1, page + d));
+
+        page = page + d;
+
+        if (page < 0) {
+            page = 0;
+        }
+
+        if (page >= PAGES.length) {
+            page = PAGES.length - 1;
+        }
+
         SoundManager.playSFX("click");
         showPage();
     }
 
+
+    // ================= SHOW PAGE =================
     private void showPage() {
+
         pageTitle.setText(TITLES[page]);
-        center.removeAll();
-        ImageIcon icon = GameConstants.getIcon("howto_" + (page + 1) + ".png", IMG_W, IMG_H);
-        if (icon != null) {
-            pageImage.setIcon(icon);
-            center.add(pageImage, BorderLayout.CENTER);
-        } else {
-            textArea.setText(PAGES[page]);
-            textArea.setCaretPosition(0);
-            center.add(textScroll, BorderLayout.CENTER);
-        }
-        center.revalidate();
-        center.repaint();
-        pageNumber.setText("Page " + (page + 1) + " / " + PAGES.length);
+        textArea.setText(PAGES[page]);
+        textArea.setCaretPosition(0);
+        pageNumber.setText("Page "+ (page + 1)+ " / "+ PAGES.length);
         prevBtn.setEnabled(page > 0);
-        nextBtn.setEnabled(page < PAGES.length - 1);
+        nextBtn.setEnabled(
+                page < PAGES.length - 1
+        );
     }
 }
 
@@ -214,33 +288,73 @@ class HowToPlayDialog extends BaseDialog {
 //  CreditDialog : credits.png (must contain names + IDs), or text fallback
 // =====================================================================
 class CreditDialog extends BaseDialog {
-    public CreditDialog(Window owner) {
-        super(owner, "Credits", 460, 360, "credits_bg.png");
-        body.setLayout(new BorderLayout());
+     public CreditDialog(Window owner) {
 
-        if (GameConstants.hasImage("credits.png")) {
-            body.add(new JLabel(GameConstants.getIcon("credits.png", 440, 300)), BorderLayout.CENTER);
-            return;
-        }
+        super(owner,"CREDITS",460,260);
+
+        body.setLayout(null);
 
         String[][] m = GameConstants.MEMBERS;
-        JPanel list = new JPanel(new GridLayout(m.length + 2, 1, 0, 4));
-        list.setOpaque(false);
-        list.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
 
-        JLabel head = GameConstants.makeLabel("Developed by", GameConstants.HEADER_FONT, GameConstants.GOLD);
-        head.setHorizontalAlignment(SwingConstants.CENTER);
-        list.add(head);
+/*
+// =========================
+// DEVELOPED BY
+// =========================
+JLabel head = GameConstants.makeLabel(
+    "Developed by",
+    GameConstants.HEADER_FONT,
+    Color.BLACK
+);
+
+head.setHorizontalAlignment(
+    SwingConstants.CENTER
+);
+
+head.setBounds(
+    30, 45,
+    340, 30
+);
+
+body.add(head);
+
+*/
+
+        // =========================
+        // MEMBERS
+        // =========================
+        int y = 50;
+
         for (String[] member : m) {
-            JLabel l = GameConstants.makeLabel(member[0] + "     " + member[1], GameConstants.BOLD_FONT, GameConstants.TEXT);
-            l.setHorizontalAlignment(SwingConstants.CENTER);
-            list.add(l);
+
+            JLabel memberLabel = GameConstants.makeLabel(member[0] + "     " + member[1],GameConstants.BOLD_FONT,GameConstants.TEXT);
+            memberLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            memberLabel.setBounds(20, y,360, 25);
+            body.add(memberLabel);
+            y += 30;
         }
-        JLabel foot = GameConstants.makeLabel("EGCO213 - Project 3", GameConstants.NORMAL_FONT, Color.LIGHT_GRAY);
-        foot.setHorizontalAlignment(SwingConstants.CENTER);
-        list.add(foot);
-        body.add(list, BorderLayout.CENTER);
-    }
+
+/*
+// =========================
+// FOOTER
+// =========================
+JLabel foot = GameConstants.makeLabel(
+    "EGCO213 - Project 3",
+    GameConstants.NORMAL_FONT,
+    Color.DARK_GRAY
+);
+
+foot.setHorizontalAlignment(
+    SwingConstants.CENTER
+);
+
+foot.setBounds(
+    30, 245,
+    340, 25
+);
+
+body.add(foot);
+*/
+}
 }
 
 // =====================================================================
@@ -252,13 +366,15 @@ class SettingDialog extends BaseDialog {
     private JLabel bgmValue, sfxValue;
 
     public SettingDialog(Window owner) {
-        super(owner, "Settings", 440, 290, "setting_bg.png");
+        super(owner, "Settings", 480, 290);
         body.setLayout(null);
 
+        int y = 50;
+
         // ---- audio ON / OFF ----
-        label("Audio:", 30, 25);
-        onRadio = radio("ON", 140, 22);
-        offRadio = radio("OFF", 220, 22);
+        label("Audio:", 30, y);
+        onRadio = radio("ON", 140, y);
+        offRadio = radio("OFF", 220, y);
         ButtonGroup group = new ButtonGroup();
         group.add(onRadio);
         group.add(offRadio);
@@ -276,9 +392,10 @@ class SettingDialog extends BaseDialog {
         };
 
         // ---- BGM slider ----
-        label("BGM:", 30, 90);
-        bgmSlider = slider(SoundManager.getBgmVolume(), 130, 80);
-        bgmValue = label(SoundManager.getBgmVolume() + "%", 350, 90);
+        int bgmY = y+50;
+        label("BGM:", 30, bgmY);
+        bgmSlider = slider(SoundManager.getBgmVolume(), 130, bgmY);
+        bgmValue = label(SoundManager.getBgmVolume() + "%", 350, bgmY);
         bgmSlider.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 SoundManager.setBgmVolume(bgmSlider.getValue());
@@ -287,9 +404,10 @@ class SettingDialog extends BaseDialog {
         });
 
         // ---- SFX slider ----
-        label("SFX:", 30, 155);
-        sfxSlider = slider(SoundManager.getSfxVolume(), 130, 145);
-        sfxValue = label(SoundManager.getSfxVolume() + "%", 350, 155);
+        int sfxY = bgmY+50;
+        label("SFX:", 30, sfxY);
+        sfxSlider = slider(SoundManager.getSfxVolume(), 130, sfxY);
+        sfxValue = label(SoundManager.getSfxVolume() + "%", 350, sfxY);
         sfxSlider.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 SoundManager.setSfxVolume(sfxSlider.getValue());
@@ -339,50 +457,108 @@ class SettingDialog extends BaseDialog {
 // =====================================================================
 class LeaderboardDialog extends BaseDialog {
     public LeaderboardDialog(Window owner, String selectMap) {
-        super(owner, "Leaderboard", 660, 440, "leaderboard_bg.png");
-        body.setLayout(new BorderLayout());
-        body.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        super(owner,"LEADERBOARD",660,440);
+        body.setLayout(null);
 
+
+        // =========================
+        // TABS
+        // =========================
         JTabbedPane tabs = new JTabbedPane();
+
         tabs.setFont(GameConstants.BOLD_FONT);
+        tabs.setBounds(35, 55,530, 290);
+
+        // =========================
+        // MAP TABS
+        // =========================
         for (int i = 0; i < MapData.MAPS.length; i++) {
+
             String name = MapData.MAPS[i].getName();
-            tabs.addTab(name, buildTab(name));
-            if (name.equals(selectMap)) tabs.setSelectedIndex(i);
+
+            tabs.addTab(name,buildTab(name));
+
+            if (name.equals(selectMap)) {
+                tabs.setSelectedIndex(i);
+            }
         }
-        body.add(tabs, BorderLayout.CENTER);
+
+        // วาง tabs บนรูป leaderboard_bg.png
+        body.add(tabs);
     }
 
+
+    // =============================================
+    // BUILD EACH MAP TAB
+    // =============================================
     private JPanel buildTab(String map) {
+
         JPanel p = new JPanel(new BorderLayout());
         p.setBackground(GameConstants.PANEL_BG);
+
         ArrayList<Leaderboard.Record> list = Leaderboard.getRanking(map);
 
+        // =========================
+        // NO RECORD
+        // =========================
         if (list.isEmpty()) {
-            JLabel none = GameConstants.makeLabel("NO RECORD", GameConstants.HEADER_FONT, Color.LIGHT_GRAY);
+            JLabel none = GameConstants.makeLabel("NO RECORD",GameConstants.HEADER_FONT,Color.LIGHT_GRAY);
             none.setHorizontalAlignment(SwingConstants.CENTER);
-            p.add(none, BorderLayout.CENTER);
+            p.add(none,BorderLayout.CENTER);
+
             return p;
         }
 
-        String[] cols = {"Rank", "Name", "Waves", "Mobs Killed"};
-        Object[][] data = new Object[list.size()][4];
+        // =========================
+        // TABLE DATA
+        // =========================
+        String[] cols = {
+            "Rank",
+            "Name",
+            "Waves",
+            "Mobs Killed"
+        };
+
+        Object[][] data =
+            new Object[list.size()][4];
+
+
         for (int i = 0; i < list.size(); i++) {
-            Leaderboard.Record r = list.get(i);
+
+            Leaderboard.Record r =
+                list.get(i);
+
             data[i][0] = i + 1;
             data[i][1] = r.name;
             data[i][2] = r.waves;
             data[i][3] = r.mobs;
         }
+
+
+        // =========================
+        // TABLE MODEL
+        // =========================
         DefaultTableModel model = new DefaultTableModel(data, cols) {
-            public boolean isCellEditable(int row, int col) { return false; }
-        };
+            public boolean isCellEditable(int row,int col) {
+                    return false;
+                }
+            };
+
+
+        // =========================
+        // TABLE
+        // =========================
         JTable table = new JTable(model);
         table.setRowHeight(26);
         table.setFont(GameConstants.NORMAL_FONT);
         table.getTableHeader().setFont(GameConstants.BOLD_FONT);
         table.getTableHeader().setReorderingAllowed(false);
-        p.add(new JScrollPane(table), BorderLayout.CENTER);
+
+        // =========================
+        // SCROLL
+        // =========================
+        JScrollPane scroll = new JScrollPane(table);
+        p.add(scroll,BorderLayout.CENTER);
         return p;
     }
 }

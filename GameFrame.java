@@ -114,12 +114,12 @@ public class GameFrame extends JFrame {
         sellToggle = new JToggleButton("Deconstruct [S]");
         sellToggle.setFont(small);
         sellToggle.setFocusable(false);
-        ImageIcon sellIcon = GameConstants.getIcon("btn_sell.png", 150, 38);
+        ImageIcon sellIcon = GameConstants.getIcon("btn_white.png", 150, 38);
         if (sellIcon != null) {
             sellToggle.setText("");
             sellToggle.setToolTipText("Deconstruct [S]");
             sellToggle.setIcon(sellIcon);
-            ImageIcon sellOn = GameConstants.getIcon("btn_sell_on.png", 150, 38);
+            ImageIcon sellOn = GameConstants.getIcon("btn_white.png", 150, 38);
             if (sellOn != null) sellToggle.setSelectedIcon(sellOn);
             sellToggle.setBorderPainted(false);
             sellToggle.setContentAreaFilled(false);
@@ -138,7 +138,7 @@ public class GameFrame extends JFrame {
         });
 
         // ---- buttons ----
-        startWaveButton = GameConstants.makeImageButton("btn_start_wave.png", "Start Wave [Space]", GameConstants.GREEN, 180, 38, 13);
+        startWaveButton = GameConstants.makeImageButton("btn_startwave.png", "Start Wave [Space]", GameConstants.GREEN, 180, 38, 13);
         startWaveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 gamePanel.startWave();
@@ -156,7 +156,7 @@ public class GameFrame extends JFrame {
             }
         });
 
-        pauseButton = GameConstants.makeImageButton("btn_pause.png", "Pause [P]", GameConstants.BLUE, 120, 38, 13);
+        pauseButton = GameConstants.makeImageButton("btn_pause.png", "", GameConstants.BLUE, 45, 45, 13);
         pauseButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) { openPause(); }
         });
