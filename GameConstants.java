@@ -37,8 +37,8 @@ public class GameConstants {
     //move to BaseDialog
     
     // ---------- colours ----------
-    public static final Color DARK_BG   = new Color(28, 32, 48);
-    public static final Color PANEL_BG  = new Color(42, 48, 72);
+    public static final Color DARK_BG   = new Color(48, 33, 2);
+    public static final Color PANEL_BG  = new Color(61, 54, 48);
     public static final Color HEADER_BG = new Color(60, 68, 100);
     public static final Color GOLD   = new Color(255, 200, 60);
     public static final Color TEXT   = new Color(0, 0, 0);
@@ -49,6 +49,7 @@ public class GameConstants {
     public static final Color GRAY   = new Color(95, 95, 120);
     public static final Color ORANGE = new Color(200, 140, 30);
     public static final Color BROWN = new Color(120, 80, 45);
+    public static final Color BAGE = new Color(255,250,220);
 
     // ---------- fonts ----------
     //use only 1 font pattern, use this instead of get font

@@ -39,12 +39,12 @@ public class GameFrame extends JFrame {
         gamePanel = new GamePanel(this, map);
 
         // map area: keeps the map in the middle of the window
-        JPanel mapArea = new ImagePanel("game_bg.png", GameConstants.DARK_BG);
+        JPanel mapArea = new ImagePanel("game_bg.png", GameConstants.PANEL_BG);
         mapArea.setLayout(new GridBagLayout());
         mapArea.add(gamePanel);
 
         JPanel root = new JPanel(new BorderLayout());
-        root.setBackground(GameConstants.DARK_BG);
+        root.setBackground(GameConstants.BAGE);
         root.add(buildHud(), BorderLayout.NORTH);
         root.add(mapArea, BorderLayout.CENTER);
         root.add(buildBottomBar(), BorderLayout.SOUTH);
@@ -59,27 +59,46 @@ public class GameFrame extends JFrame {
     // ================= HUD (display only) =================
     private JPanel buildHud() {
         JPanel hud = new ImagePanel("hud_bg.png", GameConstants.PANEL_BG);
-        hud.setLayout(new FlowLayout(FlowLayout.LEFT, 14, 8));
-        hud.add(GameConstants.makeLabel("Player: " + playerName, GameConstants.BOLD_FONT, GameConstants.GOLD));
+        hud.setLayout(new BorderLayout());
+        
+        JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 7));
+        left.setOpaque(false);
+        JLabel playerLabel = GameConstants.makeLabel("Player: " + playerName, GameConstants.NORMAL_FONT, Color.BLACK);
+        left.add(playerLabel);
 
         hpBar = new JProgressBar(0, GameConstants.MAX_HP);
         hpBar.setValue(GameConstants.MAX_HP);
         hpBar.setStringPainted(true);
         hpBar.setString("HP " + GameConstants.MAX_HP + " / " + GameConstants.MAX_HP);
         hpBar.setForeground(GameConstants.GREEN);
-        hpBar.setFont(GameConstants.BOLD_FONT);
+        hpBar.setFont(GameConstants.NORMAL_FONT);
         hpBar.setPreferredSize(new Dimension(170, 22));
-        hud.add(hpBar);
+        left.add(hpBar);
 
-        Font f = GameConstants.BOLD_FONT;
-        waveLabel = GameConstants.makeIconLabel("Wave: 0 / " + GameConstants.MAX_WAVE, "icon_wave.png", f, GameConstants.TEXT);
-        mobsLabel = GameConstants.makeLabel("Next Wave: " + WaveData.totalMobs(1) + " mobs", f, GameConstants.TEXT);
+        Font f = GameConstants.NORMAL_FONT;
+        waveLabel = GameConstants.makeIconLabel("Wave: 0 / " + GameConstants.MAX_WAVE, "icon_wave.png", f, GameConstants.BAGE);
+        mobsLabel = GameConstants.makeLabel("Next Wave: " + WaveData.totalMobs(1) + " mobs", f, GameConstants.BAGE);
+        killLabel = GameConstants.makeIconLabel("Kills: 0", "icon_kill.png", f, GameConstants.BAGE);
         coinLabel = GameConstants.makeIconLabel("Coins: " + GameConstants.START_COINS, "icon_coin.png", f, GameConstants.GOLD);
-        killLabel = GameConstants.makeIconLabel("Kills: 0", "icon_kill.png", f, GameConstants.TEXT);
-        hud.add(waveLabel);
-        hud.add(mobsLabel);
-        hud.add(coinLabel);
-        hud.add(killLabel);
+        
+        left.add(waveLabel);
+        left.add(mobsLabel);
+        left.add(killLabel);
+        left.add(coinLabel);
+        
+        //Right
+        JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 3));
+        right.setOpaque(false);
+        
+
+        pauseButton = GameConstants.makeImageButton("btn_pause.png", "", GameConstants.BLUE, 45, 45, 13);
+        pauseButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) { openPause(); }
+        });
+        right.add(pauseButton);
+
+        hud.add(left, BorderLayout.WEST);
+        hud.add(right, BorderLayout.EAST);
         return hud;
     }
 
@@ -88,7 +107,7 @@ public class GameFrame extends JFrame {
         JPanel bar = new ImagePanel("bottom_bg.png", GameConstants.PANEL_BG);
         bar.setLayout(new BorderLayout());
         bar.setBorder(BorderFactory.createEmptyBorder(6, 8, 6, 8));
-        Font small = new Font("SansSerif", Font.BOLD, 13);
+        Font small = GameConstants.GAME_FONT.deriveFont(Font.PLAIN, 12f);
 
         // ---- tower list ----
         towerList = new JList<String>();
@@ -99,11 +118,11 @@ public class GameFrame extends JFrame {
         towerList.setFont(small);
         towerList.setFocusable(false);
         towerList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        towerList.setBackground(new Color(60, 66, 95));
-        towerList.setForeground(Color.WHITE);
-        towerList.setSelectionBackground(GameConstants.GOLD);
-        towerList.setSelectionForeground(Color.BLACK);
-        towerList.setBorder(BorderFactory.createLineBorder(GameConstants.GOLD));
+        towerList.setBackground(GameConstants.PANEL_BG);
+        towerList.setForeground(GameConstants.BAGE);
+        towerList.setSelectionBackground(GameConstants.BAGE);
+        towerList.setSelectionForeground(GameConstants.PANEL_BG);
+        towerList.setBorder(BorderFactory.createLineBorder(GameConstants.BAGE));
         towerList.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) towerSelected();
@@ -115,11 +134,14 @@ public class GameFrame extends JFrame {
         sellToggle.setFont(small);
         sellToggle.setFocusable(false);
         ImageIcon sellIcon = GameConstants.getIcon("btn_white.png", 150, 38);
+        
         if (sellIcon != null) {
-            sellToggle.setText("");
-            sellToggle.setToolTipText("Deconstruct [S]");
             sellToggle.setIcon(sellIcon);
-            ImageIcon sellOn = GameConstants.getIcon("btn_white.png", 150, 38);
+
+            sellToggle.setHorizontalTextPosition(SwingConstants.CENTER);
+            sellToggle.setVerticalTextPosition(SwingConstants.CENTER);
+            sellToggle.setToolTipText("Deconstruct [S]");
+            ImageIcon sellOn = GameConstants.getIcon("btn_yellow.png", 150, 38);
             if (sellOn != null) sellToggle.setSelectedIcon(sellOn);
             sellToggle.setBorderPainted(false);
             sellToggle.setContentAreaFilled(false);
@@ -138,7 +160,7 @@ public class GameFrame extends JFrame {
         });
 
         // ---- buttons ----
-        startWaveButton = GameConstants.makeImageButton("btn_startwave.png", "Start Wave [Space]", GameConstants.GREEN, 180, 38, 13);
+        startWaveButton = GameConstants.makeImageButton("btn_startwave.png", "Start Wave [Space]", GameConstants.GREEN, 300, 38, 14);
         startWaveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 gamePanel.startWave();
@@ -156,11 +178,6 @@ public class GameFrame extends JFrame {
             }
         });
 
-        pauseButton = GameConstants.makeImageButton("btn_pause.png", "", GameConstants.BLUE, 45, 45, 13);
-        pauseButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { openPause(); }
-        });
-
         JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         left.setOpaque(false);
         left.add(towerList);
@@ -168,12 +185,11 @@ public class GameFrame extends JFrame {
 
         JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         right.setOpaque(false);
-        right.add(startWaveButton);
         right.add(speedBox);
-        right.add(pauseButton);
+        right.add(startWaveButton);
 
         infoLabel = GameConstants.makeLabel("Select a tower (or press 1-4), then click an empty tile to build.",
-                GameConstants.NORMAL_FONT, GameConstants.TEXT);
+                GameConstants.NORMAL_FONT, GameConstants.BAGE);
         infoLabel.setBorder(BorderFactory.createEmptyBorder(6, 4, 0, 0));
 
         bar.add(left, BorderLayout.WEST);
