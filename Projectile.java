@@ -1,44 +1,51 @@
-// Group members: 6xxxxxxx Firstname Lastname 1, 6xxxxxxx Firstname Lastname 2,
-//                6xxxxxxx Firstname Lastname 3, 6xxxxxxx Firstname Lastname 4,
-//                6xxxxxxx Firstname Lastname 5
+// 6813115 Renuka Choosingkae
+// 6813238 Napat Chonsaktrakul
+// 6813248 Pimpichcha Saengngoen
+// 6813258 Sittichok Boonthittanont
 package JavaProject3_TowerDefense;
+
 import java.awt.*;
-import java.util.ArrayList;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 // =====================================================================
 //  Projectile : arrow / cannonball / ice shard / fireball
 // =====================================================================
 public class Projectile {
-    private TowerType type;
-    private int level;
-    private double x, y, tx, ty, speed;
-    private Mob target;
+    private static final int FALLBACK_SIZE = 8;
+
+    private final TowerType type;
+    private final int level;
+    private final Mob target;
+    private double x, y, tx, ty;
     private boolean done = false;
 
     public Projectile(TowerType type, int level, double x, double y, Mob target) {
-        this.type = type; 
+        this.type = type;
         this.level = level;
-        this.x = x; 
-        this.y = y; 
+        this.x = x;
+        this.y = y;
         this.target = target;
-        this.tx = target.getX(); 
+        this.tx = target.getX();
         this.ty = target.getY();
-        if (type == TowerType.ARCHER) speed = 520;
-        else if (type == TowerType.CANNON) speed = 320;
-        else speed = 420;
     }
 
     public boolean isDone() { return done; }
 
+    // fly to the target (follows it while it is alive)
     public void update(double dt, ArrayList<Mob> mobs, ArrayList<Effect> effects) {
         if (done) return;
-        if (target.isAlive() && target.getHp() > 0) { tx = target.getX(); ty = target.getY(); }
-        double dx = tx - x, dy = ty - y, d = Math.sqrt(dx * dx + dy * dy);
-        double step = speed * dt;
-        if (d <= step || d < 4) {
-            x = tx; y = ty;
+        if (target.isAlive()) {
+            tx = target.getX();
+            ty = target.getY();
+        }
+        double dx = tx - x, dy = ty - y;
+        double d = Math.sqrt(dx * dx + dy * dy);
+        double step = type.getProjectileSpeed() * dt;
+        if (d <= step) {
+            x = tx;
+            y = ty;
             hit(mobs, effects);
             done = true;
         } else {
@@ -49,85 +56,31 @@ public class Projectile {
 
     private void hit(ArrayList<Mob> mobs, ArrayList<Effect> effects) {
         int dmg = type.getDamage(level);
-        boolean targetOk = target.isAlive() && target.getHp() > 0;
-        switch (type) {
-            case CANNON:
-                double r = TowerType.SPLASH_RADIUS * GameConstants.CELL;
-                for (Mob m : mobs) {
-                    if (!m.isAlive() || m.getHp() <= 0) continue;
-                    double ddx = m.getX() - x, ddy = m.getY() - y;
-                    if (ddx * ddx + ddy * ddy <= r * r) m.takeDamage(dmg);
-                }
-                effects.add(Effect.explosion(x, y, r,type));
-                break;
-            case ICE:
-                if (targetOk) {
-                    target.takeDamage(dmg);
-                    target.applySlow(TowerType.SLOW_PCT[level - 1], TowerType.SLOW_TIME);
-                }
-                effects.add(Effect.iceBurst(x, y, type));
-                break;
-            case FIRE:
-                if (targetOk) {
-                    target.takeDamage(dmg);
-                    target.applyBurn(TowerType.BURN_DPS[level - 1], TowerType.BURN_TIME);
-                }
-                effects.add(Effect.fireBurst(x, y, type));
-                break;
-            default:
-                if (targetOk) target.takeDamage(dmg);
+        if (type == TowerType.CANNON) {                     // splash: every mob near the hit point
+            double r = TowerType.SPLASH_RADIUS * GameConstants.CELL;
+            for (Mob m : mobs) {
+                double ddx = m.getX() - x, ddy = m.getY() - y;
+                if (m.isAlive() && ddx * ddx + ddy * ddy <= r * r) m.takeDamage(dmg);
+            }
+        } else if (target.isAlive()) {                      // single target
+            target.takeDamage(dmg);
+            if (type == TowerType.ICE) target.applySlow(TowerType.SLOW_PCT[level - 1], TowerType.SLOW_TIME);
+            else if (type == TowerType.FIRE) target.applyBurn(TowerType.BURN_DPS[level - 1], TowerType.BURN_TIME);
         }
+        if (type != TowerType.ARCHER) effects.add(Effect.impact(x, y, type));
     }
 
     public void draw(Graphics2D g) {
-        int ix = (int) x, iy = (int) y;
-        int size = 1;
-        //Stroke old = g.getStroke();
-         
-        BufferedImage pjt = GameConstants.getImage(type.name().toLowerCase() + "_projectile.png");
-        if (pjt != null) {
-        //System.out.println("Projectile: " + type.name().toLowerCase() + "_projectile.png");
-        double angle = Math.atan2(ty - y, tx - x);
-        AffineTransform old = g.getTransform();
-        g.translate(ix, iy);
-        g.rotate(angle+Math.PI/2);
-
-        g.drawImage(pjt, -size / 2, -size / 2, null);
-
-        g.setTransform(old);
+        BufferedImage img = GameConstants.getImage(type.getKey() + "_projectile.png");
+        if (img == null) {                                   // simple fallback
+            g.setColor(type.getColor());
+            g.fillOval((int) x - FALLBACK_SIZE / 2, (int) y - FALLBACK_SIZE / 2, FALLBACK_SIZE, FALLBACK_SIZE);
+            return;
         }
-        /*
-        else{
-            switch (type) {
-        case ARCHER:
-            double a = Math.atan2(ty - y, tx - x);
-            g.setStroke(new BasicStroke(2));
-            g.setColor(new Color(110, 70, 30));
-            g.drawLine((int) (x - Math.cos(a) * 12), (int) (y - Math.sin(a) * 12), ix, iy);
-            g.setColor(Color.LIGHT_GRAY);
-            g.fillOval(ix - 2, iy - 2, 4, 4);
-            break;
-            case CANNON:
-                g.setColor(Color.DARK_GRAY);
-                g.fillOval(ix - 6, iy - 6, 12, 12);
-                g.setColor(Color.BLACK);
-                g.drawOval(ix - 6, iy - 6, 12, 12);
-                break;
-                case ICE:
-                    g.setColor(new Color(170, 235, 255));
-                    g.fillPolygon(new int[]{ix, ix + 5, ix, ix - 5}, new int[]{iy - 6, iy, iy + 6, iy}, 4);
-                    g.setColor(Color.WHITE);
-                    g.drawPolygon(new int[]{ix, ix + 5, ix, ix - 5}, new int[]{iy - 6, iy, iy + 6, iy}, 4);
-                    break;
-                    case FIRE:
-                        g.setColor(new Color(255, 90, 20));
-                        g.fillOval(ix - 6, iy - 6, 12, 12);
-                        g.setColor(Color.YELLOW);
-                        g.fillOval(ix - 3, iy - 3, 6, 6);
-                        break;
-                    }
-                    //g.setStroke(old);
-                }
-                */
+        AffineTransform old = g.getTransform();
+        g.translate(x, y);
+        g.rotate(Math.atan2(ty - y, tx - x) + Math.PI / 2);  // point to the target
+        g.drawImage(img, -img.getWidth() / 2, -img.getHeight() / 2, null);
+        g.setTransform(old);
     }
 }

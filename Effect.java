@@ -1,140 +1,114 @@
+// 6813115 Renuka Choosingkae
+// 6813238 Napat Chonsaktrakul
+// 6813248 Pimpichcha Saengngoen
+// 6813258 Sittichok Boonthittanont
 package JavaProject3_TowerDefense;
+
 import java.awt.*;
-import java.util.ArrayList;
 import java.awt.image.BufferedImage;
 
+// =====================================================================
+//  Effect : short animations (hit impact, death, floating text, banner)
+// =====================================================================
 public class Effect {
-    private static final int HIT = 0, EXPLOSION = 1, ICE = 2, FIRE = 3, DEATH = 4, TEXT = 5, BANNER = 6;
-    private TowerType type;
-    private int kind;
-    private double x, y, life, maxLife, radius = 16;
+    private static final int IMPACT = 0, DEATH = 1, TEXT = 2, BANNER = 3;
+    private static final double IMPACT_LIFE = 0.5, DEATH_LIFE = 0.45, TEXT_LIFE = 1.1, BANNER_LIFE = 2.2;
+    private static final double TEXT_RISE_SPEED = 30, BANNER_FADE_TIME = 0.5;
+    private static final float IMPACT_ALPHA = 0.7f;
+
+    private final int kind;
+    private final double maxLife;
+    private double x, y, life;
+    private TowerType tower;                 // only for IMPACT
     private String text = "";
-    private Color color = Color.WHITE;
+    private Color color = Color.LIGHT_GRAY;
 
     private Effect(int kind, double x, double y, double life) {
-        this.kind = kind; 
-        this.x = x; 
-        this.y = y; 
-        this.life = life; 
+        this.kind = kind;
+        this.x = x;
+        this.y = y;
+        this.life = life;
         this.maxLife = life;
     }
-   
-    public static Effect explosion(double x, double y, double radius, TowerType type) {
-        Effect e = new Effect(EXPLOSION, x, y, 0.65); 
-        e.radius = radius; 
-        e.type = type; 
-        return e;
-    }
-    public static Effect iceBurst(double x, double y, TowerType type) { 
-        Effect e = new Effect(ICE, x, y, 0.45); 
-        e.type = type; 
-        return e;
-    }
-    public static Effect fireBurst(double x, double y, TowerType type) { 
-        Effect e = new Effect(FIRE, x, y, 0.45); 
-        e.type = type; 
-        return e;
-    }
-    public static Effect death(double x, double y, Color c) {
-        Effect e = new Effect(DEATH, x, y, 0.45); 
-        e.color = c; 
-        return e;
-    }
-    public static Effect text(double x, double y, String t, Color c) {
-        Effect e = new Effect(TEXT, x, y, 1.1); 
-        e.text = t; e.color = c; 
-        return e;
-    }
-    public static Effect banner(double x, double y, String t, Color c) {
-        Effect e = new Effect(BANNER, x, y, 2.2); 
-        e.text = t; 
-        e.color = c; 
-        return e;
-    }
-    
 
+    // ================= factory methods =================
+    public static Effect impact(double x, double y, TowerType tower) {
+        Effect e = new Effect(IMPACT, x, y, IMPACT_LIFE);
+        e.tower = tower;
+        e.color = tower.getColor();
+        return e;
+    }
+
+    public static Effect death(double x, double y) {
+        return new Effect(DEATH, x, y, DEATH_LIFE);
+    }
+
+    public static Effect text(double x, double y, String t, Color c) {
+        Effect e = new Effect(TEXT, x, y, TEXT_LIFE);
+        e.text = t;
+        e.color = c;
+        return e;
+    }
+
+    public static Effect banner(double x, double y, String t, Color c) {
+        Effect e = new Effect(BANNER, x, y, BANNER_LIFE);
+        e.text = t;
+        e.color = c;
+        return e;
+    }
+
+    // ================= update / draw =================
     public void update(double dt) {
         life -= dt;
-        if (kind == TEXT) y -= 30 * dt;
+        if (kind == TEXT) y -= TEXT_RISE_SPEED * dt;
     }
 
     public boolean isDone() { return life <= 0; }
 
     public void draw(Graphics2D g) {
-        double a = Math.max(0, Math.min(1, life / maxLife));
-        double p = 1 - a;
+        double a = Math.max(0, Math.min(1, life / maxLife));   // 1 -> 0 while fading
+        double p = 1 - a;                                       // 0 -> 1 while growing
         int ix = (int) x, iy = (int) y;
-        Stroke old = g.getStroke();
         switch (kind) {
-            case HIT:
-            case EXPLOSION:
-            case ICE:
-            case FIRE:
-                drawImpact(g, ix, iy, a, p);
+            case IMPACT:
+                drawPicture(g, tower.getKey() + "_effect.png", ix, iy, (int) (30 + 20 * p), IMPACT_ALPHA);
                 break;
-            case DEATH: {
-                drawDeath(g, ix, iy, a, p);
+            case DEATH:
+                drawPicture(g, "death_effect.png", ix, iy, (int) (20 + 15 * p), (float) a);
                 break;
-            }
             case TEXT:
-                drawCenteredText(g, ix, iy, 15, a);
+                drawCenteredText(g, ix, iy, GameConstants.POPUP_FONT, a);
                 break;
             case BANNER:
-                drawCenteredText(g, ix, iy, 40, Math.min(1, life / 0.5));
+                drawCenteredText(g, ix, iy, GameConstants.BANNER_FONT, Math.min(1, life / BANNER_FADE_TIME));
                 break;
-                /*
-                case UPGRADE: {
-                    drawTowerUpgrade(g, ix, iy, 0.5, p);
-                    break;
-                }
-                */
-        }
-        g.setStroke(old);
-    }
-
-    private void drawImpact(Graphics2D g, int ix, int iy, double a, double p) {
-        BufferedImage impact = GameConstants.getImage(type.name().toLowerCase() + "_effect.png");
-        if (impact != null) {
-            int size = (int) (30 + 20 * p);
-            Composite oldComposite = g.getComposite();
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.7f));
-            g.drawImage(impact, ix - size / 2, iy - size / 2, size, size, null);
-            g.setComposite(oldComposite);
-            //System.out.println("Drawing impact effect for available image");
-        } /*else{
-            System.out.println("Drawing impact effect for missing image");
-            int r = (int) (radius * (0.3 + 0.7 * p));
-            g.setColor(fade(new Color(255, 140, 30), a * 0.6));       
-            g.fillOval(ix - r, iy - r, 2 * r, 2 * r);
-            int r2 = r / 2;
-            g.setColor(fade(new Color(255, 240, 120), a));
-            g.fillOval(ix - r2, iy - r2, 2 * r2, 2 * r2);
-        }*/
-    }
-    private void drawDeath(Graphics2D g,int ix,int iy,double a,double p) {
-        BufferedImage death = GameConstants.getImage("death_effect.png");
-        if (death != null) {
-            int size = (int) (20 + 15 * p);
-            Composite old = g.getComposite();
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float) a));
-            g.drawImage(death,ix - size / 2,iy - size / 2,size,size,null);
-            g.setComposite(old);
         }
     }
 
-    private void drawCenteredText(Graphics2D g, int cx, int cy, int size, double a) {
-        g.setFont(GameConstants.GAME_FONT.deriveFont(Font.BOLD, (float) size));
+    // PNG if it exists, otherwise a simple fading circle
+    private void drawPicture(Graphics2D g, String file, int cx, int cy, int size, float alpha) {
+        BufferedImage img = GameConstants.getImage(file);
+        if (img != null) {
+            GameConstants.drawFaded(g, img, cx - size / 2, cy - size / 2, size, size, alpha);
+        } else {
+            g.setColor(fade(color, alpha));
+            g.fillOval(cx - size / 2, cy - size / 2, size, size);
+        }
+    }
+
+    private void drawCenteredText(Graphics2D g, int cx, int cy, Font font, double a) {
+        g.setFont(font);
         FontMetrics fm = g.getFontMetrics();
-        int tx = cx - fm.stringWidth(text) / 2, ty = cy + fm.getAscent() / 2 - 2;
+        int tx = cx - fm.stringWidth(text) / 2;
+        int ty = cy + fm.getAscent() / 2 - 2;
         g.setColor(fade(Color.BLACK, a));
-        g.drawString(text, tx + 2, ty + 2);
+        g.drawString(text, tx + 2, ty + 2);          // shadow
         g.setColor(fade(color, a));
         g.drawString(text, tx, ty);
     }
 
-private static Color fade(Color c, double a) {
-    int alpha = (int) (255 * Math.max(0, Math.min(1, a)));
-    return new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
-}
-
+    private static Color fade(Color c, double a) {
+        int alpha = (int) (255 * Math.max(0, Math.min(1, a)));
+        return new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
+    }
 }

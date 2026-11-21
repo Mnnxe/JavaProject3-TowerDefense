@@ -1,4 +1,9 @@
+// 6813115 Renuka Choosingkae
+// 6813238 Napat Chonsaktrakul
+// 6813248 Pimpichcha Saengngoen
+// 6813258 Sittichok Boonthittanont
 package JavaProject3_TowerDefense;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -7,448 +12,289 @@ import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
 
 // =====================================================================
-//  BaseDialog : parent of every pop-up (title bar + X button + PNG background)
+//  BaseDialog : parent of every pop-up (title picture + X button + beige body)
 // =====================================================================
 public class BaseDialog extends JDialog {
-    //protected JPanel body;
-    protected JLabel titleLabel;
-    protected ImagePanel body;
-    protected JButton closeBtn;
+    private static final int MARGIN_X = 30, MARGIN_TOP = 35, MARGIN_BOTTOM = 30;
+    private static final int TITLE_W = 220, TITLE_H = 60, TITLE_Y = 5;
+    private static final int CLOSE_SIZE = 45, BORDER = 3;
+
+    protected final JPanel body;
+    private final JLabel titleLabel;
+    private final JButton closeBtn;
 
     public BaseDialog(Window owner, String title, int w, int h) {
         super(owner, title, Dialog.ModalityType.APPLICATION_MODAL);
         setUndecorated(true);
-        setBackground(new Color(0,0,0,0));
+        setBackground(GameConstants.TRANSPARENT);
         setSize(w, h);
 
-        JPanel root = new JPanel();
-        root.setLayout(null);
-        root.setOpaque(false);
+        int bodyW = w - 2 * MARGIN_X;
+        int bodyH = h - MARGIN_TOP - MARGIN_BOTTOM;
 
-        int bodyX = 30;
-        int bodyY = 35;
+        body = new JPanel(null);
+        body.setBackground(GameConstants.BEIGE);
+        body.setBorder(BorderFactory.createLineBorder(Color.BLACK, BORDER));
+        body.setBounds(MARGIN_X, MARGIN_TOP, bodyW, bodyH);
 
-        int bodyW = w - 60;
-        int bodyH = h - 65;
-
-        int titleW = 220;
-        int titleH = 60;
-
-        int titleX = bodyX + (bodyW - titleW) / 2;
-        int titleY = 5;
-
-        ImageIcon titleIcon = GameConstants.getIcon("btn_yellow.png", 220, 60);
-        titleLabel = new JLabel(title,titleIcon,SwingConstants.CENTER);
+        titleLabel = new JLabel(title, GameConstants.getIcon("btn_yellow.png", TITLE_W, TITLE_H), SwingConstants.CENTER);
         titleLabel.setHorizontalTextPosition(SwingConstants.CENTER);
         titleLabel.setVerticalTextPosition(SwingConstants.CENTER);
         titleLabel.setFont(GameConstants.HEADER_FONT);
-        titleLabel.setForeground(Color.BLACK);
-        titleLabel.setBounds(titleX,titleY,titleW,titleH);
+        titleLabel.setForeground(GameConstants.TEXT);
+        titleLabel.setBounds(MARGIN_X + (bodyW - TITLE_W) / 2, TITLE_Y, TITLE_W, TITLE_H);
 
-        body = new ImagePanel(GameConstants.BAGE);        
-        body.setLayout(null);
-        body.setBorder(
-        BorderFactory.createLineBorder(Color.BLACK, 3));
-        body.setBounds(bodyX, bodyY, bodyW, bodyH);
-        
-        int closeSize = 45;
-        closeBtn = GameConstants.makeImageButton("btn_close.png","",GameConstants.RED,45, 45,14);
-        closeBtn.setBounds(bodyX + bodyW - closeSize / 2,bodyY - closeSize / 2,closeSize,closeSize);        
+        closeBtn = GameConstants.makeIconButton("btn_close.png", "X", CLOSE_SIZE);
+        closeBtn.setBounds(MARGIN_X + bodyW - CLOSE_SIZE / 2, MARGIN_TOP - CLOSE_SIZE / 2, CLOSE_SIZE, CLOSE_SIZE);
         closeBtn.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    SoundManager.playSFX("click");
-                    onClose();
-                }
-            }
-        );
+            public void actionPerformed(ActionEvent e) { dispose(); }
+        });
 
+        JPanel root = new JPanel(null);
+        root.setOpaque(false);
+        root.add(closeBtn);      // added first = drawn on top
         root.add(titleLabel);
-        root.add(closeBtn);
         root.add(body);
-
-        root.setComponentZOrder(closeBtn, 0);
-        root.setComponentZOrder(titleLabel, 1);
-        root.setComponentZOrder(body, 2);
-
-
         setContentPane(root);
         setLocationRelativeTo(owner);
     }
 
-    protected void hideTitle() {
-        titleLabel.setVisible(false);
-    }
- 
-    protected void hideCloseButton() {
-        closeBtn.setVisible(false);
-    }
-
+    // ================= options for child dialogs =================
+    protected void hideTitle()       { titleLabel.setVisible(false); }
+    protected void hideCloseButton() { closeBtn.setVisible(false); }
     protected void hideBody() {
-        body.setTransparent();
+        body.setOpaque(false);
+        body.setBorder(null);
     }
 
-    protected void onClose() { dispose(); }
+    // ================= helpers shared by every dialog =================
+    protected int centerX(int width) { return (body.getWidth() - width) / 2; }
+
+    protected JLabel addLabel(String text, Font font, int x, int y, int w, int h) {
+        JLabel l = GameConstants.makeLabel(text, font, GameConstants.TEXT);
+        l.setBounds(x, y, w, h);
+        body.add(l);
+        return l;
+    }
+
+    protected JLabel addCenteredLabel(String text, Font font, int y, int h) {
+        JLabel l = addLabel(text, font, 0, y, body.getWidth(), h);
+        l.setHorizontalAlignment(SwingConstants.CENTER);
+        return l;
+    }
+
+    protected JButton addButton(String imageFile, String text, int x, int y, int w, int h) {
+        JButton b = GameConstants.makeButton(imageFile, text, w, h);
+        b.setBounds(x, y, w, h);
+        body.add(b);
+        return b;
+    }
 }
 
 // =====================================================================
 //  ExitDialog : "Quit this game?"  Yes / No
 // =====================================================================
 class ExitDialog extends BaseDialog {
+    private static final int BTN_W = 100, BTN_H = 40, GAP = 20, BTN_Y = 100;
+
     public ExitDialog(Window owner) {
         super(owner, "Exit", 480, 240);
         hideCloseButton();
-        body.setLayout(null);
+        addCenteredLabel("Quit this game?", GameConstants.HEADER_FONT, 30, 50);
 
-        JLabel q = GameConstants.makeLabel("Quit this game?", GameConstants.HEADER_FONT, GameConstants.TEXT);
-        q.setHorizontalAlignment(SwingConstants.CENTER);
-        q.setBounds(0, 30, body.getWidth(), 50);
+        int x = centerX(BTN_W * 2 + GAP);
+        JButton yes = addButton("btn_yes.png", "Yes", x, BTN_Y, BTN_W, BTN_H);
+        JButton no  = addButton("btn_no.png", "No", x + BTN_W + GAP, BTN_Y, BTN_W, BTN_H);
 
-        int startX = 100;
-
-        JButton yes = GameConstants.makeImageButton("btn_yes.png", "Yes", GameConstants.RED, 100, 40, 16);
-        yes.setBounds(startX, 100, 100, 40);
         yes.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 SoundManager.stopBGM();
                 System.exit(0);
             }
         });
-
-        JButton no = GameConstants.makeImageButton("btn_no.png", "No", GameConstants.BLUE, 100, 40, 16);
-        no.setBounds(startX+yes.getWidth()+20, 100, 100, 40);
         no.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { 
-                SoundManager.playSFX("click");
-                onClose();
-            }
+            public void actionPerformed(ActionEvent e) { dispose(); }
         });
-
-        body.add(q);
-        body.add(yes);
-        body.add(no);
     }
 }
 
 // =====================================================================
-//  HowToPlayDialog : pages with Previous / Next
-//  Uses howto_1.png ... howto_5.png. If a picture is missing -> text page.
+//  HowToPlayDialog : text pages with Previous / Next
+//  (numbers come from the constants, so the text always matches the game)
 // =====================================================================
 class HowToPlayDialog extends BaseDialog {
+    private static final int NAV_SIZE = 30, NAV_Y = 350, NAV_MARGIN = 60;
 
-    private static final String[] TITLES = {
-        "Goal",
-        "Building Towers",
-        "Upgrade & Sell",
-        "Controls",
-        "Enemies"
-    };
+    private static final String[] TITLES = {"Goal", "Building Towers", "Upgrade & Sell", "Controls"};
 
     private static final String[] PAGES = {
-
-        "Mobs walk along the path from the purple portal to your castle.\n\n"
-      + "- Every mob that reaches the castle takes away base HP.\n"
-      + "- Base HP starts at 100 and can NOT be recovered.\n"
+        "Mobs walk along the path from the portal to your base.\n\n"
+      + "- Every mob that reaches the base takes away base HP.\n"
+      + "- Base HP starts at " + GameConstants.MAX_HP + " and can NOT be recovered.\n"
       + "- If it hits 0 -> DEFEAT.\n"
-      + "- Survive all 10 waves -> VICTORY!\n\n"
+      + "- Survive all " + GameConstants.MAX_WAVE + " waves -> VICTORY!\n\n"
       + "Wave 5 has a Mini Boss and wave 10 has the Final Boss.",
 
-
         "1. Click a tower in the list at the bottom (or press 1-4).\n"
-      + "2. Move the mouse over the map\n"
-      + "3. Click an empty tile to build.\n\n"
-      + "You cannot build on the path"
-      + "or without enough coins\n\n"
-      + "Archer (50c) - single target\n"
-      + "Cannon (80c) - splash damage 1 grid\n"
-      + "Ice (100c) - slows enemies\n"
-      + "Fire (130c) - burns enemies over time",
+      + "2. Move the mouse over the map to see its range.\n"
+      + "3. Click an empty tile to build.\n"
+      + "You cannot build on the path or without enough coins.\n\n"
+      + towerList(),
 
-
-        "UPGRADE: click a tower that is already on the map (max Lv.3).\n\n"
-      + "SELL: turn on 'Deconstruct' (or press S), then click a tower.\n"
-      + "You get back 70% of all coins you spent on that tower.\n\n"
-      + "IMPORTANT: once a wave starts you cannot build, upgrade or sell.\n\n"
-      + "Coins: start with 150, earn from kills, and get "
-      + "30 + (wave x 5) bonus after each wave.",
-
+        "UPGRADE: click a tower on the map (max Lv." + TowerType.MAX_LEVEL + ").\n\n"
+      + "SELL: turn on 'Deconstruct' (or press S), then click a tower. "
+      + "You get back " + Math.round(GameConstants.REFUND_RATE * 100) + "% of all coins spent on it.\n\n"
+      + "Once a wave starts you cannot build, upgrade or sell.\n\n"
+      + "Coins: start with " + GameConstants.START_COINS + ", earn from kills, and get "
+      + GameConstants.WAVE_BONUS + " + (wave x " + GameConstants.WAVE_BONUS_PER_WAVE + ") bonus after each wave.",
 
         "SPACE - start next wave\n"
       + "P - pause menu\n"
       + "1 / 2 / 3 / 4 - select Archer / Cannon / Ice / Fire\n"
       + "S - toggle deconstruct mode\n"
       + "ESC / Right click - cancel selection\n\n"
-      + "Speed box: play at x1 or x2 speed.",
-
+      + "Speed box: play at x1 or x2 speed."
     };
 
-
     private int page = 0;
-
-    private JLabel pageTitle;
-    private JLabel pageNumber;
-
+    private JLabel pageTitle, pageNumber;
     private JTextArea textArea;
-
-    private JButton prevBtn;
-    private JButton nextBtn;
-
+    private JButton prevBtn, nextBtn;
 
     public HowToPlayDialog(Window owner) {
+        super(owner, "HOW TO PLAY", 620, 460);
 
-        // howto_bg.png = รูปพื้นหลังของ body
-        super(owner,"HOW TO PLAY",620,460);
+        pageTitle = addCenteredLabel("", GameConstants.HEADER_FONT, 35, 35);
 
-        // ================= PAGE TITLE =================
-        pageTitle = GameConstants.makeLabel("",GameConstants.HEADER_FONT,GameConstants.TEXT);
-        pageTitle.setBounds(0, 35, body.getWidth(), 35);
-        pageTitle.setHorizontalAlignment(SwingConstants.CENTER);
-        body.add(pageTitle);
-
-        // ================= TEXT =================
         textArea = new JTextArea();
-
         textArea.setEditable(false);
         textArea.setFocusable(false);
-
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
-
-        // ใช้ custom font
-        textArea.setFont(GameConstants.GAME_FONT.deriveFont(Font.BOLD, (float) 16));
+        textArea.setFont(GameConstants.TEXT_FONT);
         textArea.setForeground(GameConstants.TEXT);
-
-        // สำคัญ:
-        // ทำให้พื้นหลัง JTextArea โปร่งใส
-        // จะได้เห็น howto_bg.png ข้างหลัง
         textArea.setOpaque(false);
-        textArea.setBounds(55, 85,450, 250);
+        textArea.setBounds(55, 85, 450, 250);
         body.add(textArea);
 
-        int sizebtn = 30;
-        // ================= PREVIOUS =================
-        prevBtn = GameConstants.makeImageButton("btn_prev.png","",GameConstants.BLUE,sizebtn, sizebtn,14);
-        prevBtn.setBounds(60, 350, sizebtn, sizebtn);
-        prevBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                changePage(-1);
-            }
-        });
-
-        body.add(prevBtn);
-
-
-        // ================= PAGE NUMBER =================
-        pageNumber = GameConstants.makeLabel("",GameConstants.BOLD_FONT,GameConstants.TEXT);
+        prevBtn = addNavButton("btn_prev.png", "<", NAV_MARGIN, -1);
+        nextBtn = addNavButton("btn_next.png", ">", body.getWidth() - NAV_MARGIN - NAV_SIZE, 1);
+        pageNumber = addLabel("", GameConstants.BOLD_FONT, centerX(160), NAV_Y, 160, NAV_SIZE);
         pageNumber.setHorizontalAlignment(SwingConstants.CENTER);
-        pageNumber.setBounds(200, 350,160, 30);
-        body.add(pageNumber);
 
+        showPage();
+    }
 
-        // ================= NEXT =================
-        nextBtn = GameConstants.makeImageButton("btn_next.png","",GameConstants.BLUE,sizebtn,sizebtn,14);
-        nextBtn.setBounds(450, 350, sizebtn, sizebtn);
+    // one line per tower: name, cost, unlock wave and skill
+    private static String towerList() {
+        String s = "";
+        for (TowerType t : TowerType.values())
+            s += t.getName() + " (" + t.getCost(1) + "c, wave " + t.getUnlockWave() + "+) - " + t.getSkill(1) + "\n";
+        return s;
+    }
 
-        nextBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                changePage(1);
-            }
+    private JButton addNavButton(String imageFile, String text, int x, final int step) {
+        JButton b = GameConstants.makeIconButton(imageFile, text, NAV_SIZE);
+        b.setBounds(x, NAV_Y, NAV_SIZE, NAV_SIZE);
+        b.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) { changePage(step); }
         });
+        body.add(b);
+        return b;
+    }
 
-        body.add(nextBtn);
-        // แสดงหน้าแรก
+    private void changePage(int step) {
+        page = Math.max(0, Math.min(PAGES.length - 1, page + step));
         showPage();
     }
 
-
-    // ================= CHANGE PAGE =================
-    private void changePage(int d) {
-
-        page = page + d;
-
-        if (page < 0) {
-            page = 0;
-        }
-
-        if (page >= PAGES.length) {
-            page = PAGES.length - 1;
-        }
-
-        SoundManager.playSFX("click");
-        showPage();
-    }
-
-
-    // ================= SHOW PAGE =================
     private void showPage() {
-
         pageTitle.setText(TITLES[page]);
         textArea.setText(PAGES[page]);
-        textArea.setCaretPosition(0);
-        pageNumber.setText("Page "+ (page + 1)+ " / "+ PAGES.length);
+        pageNumber.setText("Page " + (page + 1) + " / " + PAGES.length);
         prevBtn.setEnabled(page > 0);
-        nextBtn.setEnabled(
-                page < PAGES.length - 1
-        );
+        nextBtn.setEnabled(page < PAGES.length - 1);
     }
 }
 
 // =====================================================================
-//  CreditDialog : credits.png (must contain names + IDs), or text fallback
+//  CreditDialog : IDs and names of all group members
 // =====================================================================
 class CreditDialog extends BaseDialog {
-    
     private static final String[][] MEMBERS = {
         {"6813115", "Renuka",     "Choosingkae"},
         {"6813238", "Napat",      "Chonsaktrakul"},
         {"6813248", "Pimpichcha", "Saengngoen"},
-        {"6813258", "Sittichok",  "Boonthittanont"},
+        {"6813258", "Sittichok",  "Boonthittanont"}
     };
+    private static final int[] COLUMN_X = {50, 160, 310};
+    private static final int FIRST_Y = 50, ROW_H = 30, CELL_W = 200, CELL_H = 25;
 
     public CreditDialog(Window owner) {
-        
-        super(owner,"CREDITS",580,260);
-        body.setLayout(null);
-
-
-/*
-// =========================
-// DEVELOPED BY
-// =========================
-JLabel head = GameConstants.makeLabel(
-    "Developed by",
-    GameConstants.HEADER_FONT,
-    Color.BLACK
-);
-
-head.setHorizontalAlignment(
-    SwingConstants.CENTER
-);
-
-head.setBounds(
-    30, 45,
-    340, 30
-);
-
-body.add(head);
-
-*/
-
-        // =========================
-        // MEMBERS
-        // =========================
-        int y = 50;
-        
-
-        for (String[] member : MEMBERS) {
-
-            String text = String.format("%-7s %-10s %-15s",member[0],member[1],member[2]);
-
-            JLabel memberLabel = GameConstants.makeLabel(text,GameConstants.BOLD_FONT,GameConstants.TEXT);
-            memberLabel.setHorizontalAlignment(SwingConstants.LEFT);
-            memberLabel.setBounds(50, y,500, 25);
-            body.add(memberLabel);
-            y += 30;
-        }
-
-        
-
-/*
-// =========================
-// FOOTER
-// =========================
-JLabel foot = GameConstants.makeLabel(
-    "EGCO213 - Project 3",
-    GameConstants.NORMAL_FONT,
-    Color.DARK_GRAY
-);
-
-foot.setHorizontalAlignment(
-    SwingConstants.CENTER
-);
-
-foot.setBounds(
-    30, 245,
-    340, 25
-);
-
-body.add(foot);
-*/
-}
+        super(owner, "CREDITS", 580, 260);
+        for (int row = 0; row < MEMBERS.length; row++)
+            for (int col = 0; col < COLUMN_X.length; col++)
+                addLabel(MEMBERS[row][col], GameConstants.BOLD_FONT,
+                         COLUMN_X[col], FIRST_Y + row * ROW_H, CELL_W, CELL_H);
+    }
 }
 
 // =====================================================================
 //  SettingDialog : audio ON/OFF radio buttons + BGM / SFX sliders
 // =====================================================================
 class SettingDialog extends BaseDialog {
+    private static final int LABEL_X = 30, SLIDER_X = 130, VALUE_X = 350;
+    private static final int FIRST_Y = 50, ROW_GAP = 50;
+
     private JRadioButton onRadio, offRadio;
     private JSlider bgmSlider, sfxSlider;
-    private JLabel bgmValue, sfxValue;
 
     public SettingDialog(Window owner) {
         super(owner, "Settings", 480, 290);
-        body.setLayout(null);
-
-        int y = 50;
 
         // ---- audio ON / OFF ----
-        label("Audio:", 30, y);
-        onRadio = radio("ON", 140, y);
-        offRadio = radio("OFF", 220, y);
+        addLabel("Audio:", GameConstants.BOLD_FONT, LABEL_X, FIRST_Y, 90, 25);
+        onRadio = addRadio("ON", 140, FIRST_Y);
+        offRadio = addRadio("OFF", 220, FIRST_Y);
         ButtonGroup group = new ButtonGroup();
         group.add(onRadio);
         group.add(offRadio);
-        if (SoundManager.isAudioOn()) onRadio.setSelected(true); else offRadio.setSelected(true);
+        if (SoundManager.isAudioOn()) onRadio.setSelected(true);
+        else offRadio.setSelected(true);
 
-        ItemListener audioListener = new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    boolean on = onRadio.isSelected();
-                    SoundManager.setAudioOn(on);
-                    bgmSlider.setEnabled(on);
-                    sfxSlider.setEnabled(on);
-                }
-            }
-        };
+        // ---- volume sliders ----
+        bgmSlider = addVolumeRow("BGM:", SoundManager.getBgmVolume(), FIRST_Y + ROW_GAP);
+        sfxSlider = addVolumeRow("SFX:", SoundManager.getSfxVolume(), FIRST_Y + 2 * ROW_GAP);
+        setSlidersEnabled(SoundManager.isAudioOn());
 
-        // ---- BGM slider ----
-        int bgmY = y+50;
-        label("BGM:", 30, bgmY);
-        bgmSlider = slider(SoundManager.getBgmVolume(), 130, bgmY);
-        bgmValue = label(SoundManager.getBgmVolume() + "%", 350, bgmY);
         bgmSlider.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                SoundManager.setBgmVolume(bgmSlider.getValue());
-                bgmValue.setText(bgmSlider.getValue() + "%");
-            }
+            public void stateChanged(ChangeEvent e) { SoundManager.setBgmVolume(bgmSlider.getValue()); }
         });
-
-        // ---- SFX slider ----
-        int sfxY = bgmY+50;
-        label("SFX:", 30, sfxY);
-        sfxSlider = slider(SoundManager.getSfxVolume(), 130, sfxY);
-        sfxValue = label(SoundManager.getSfxVolume() + "%", 350, sfxY);
         sfxSlider.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 SoundManager.setSfxVolume(sfxSlider.getValue());
-                sfxValue.setText(sfxSlider.getValue() + "%");
-                if (!sfxSlider.getValueIsAdjusting()) SoundManager.playSFX("place"); // preview
+                if (!sfxSlider.getValueIsAdjusting()) SoundManager.playSFX("place");   // preview
             }
         });
 
-        bgmSlider.setEnabled(SoundManager.isAudioOn());
-        sfxSlider.setEnabled(SoundManager.isAudioOn());
+        ItemListener audioListener = new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() != ItemEvent.SELECTED) return;
+                boolean on = onRadio.isSelected();
+                SoundManager.setAudioOn(on);
+                setSlidersEnabled(on);
+            }
+        };
         onRadio.addItemListener(audioListener);
         offRadio.addItemListener(audioListener);
     }
 
-    private JLabel label(String text, int x, int y) {
-        JLabel l = GameConstants.makeLabel(text, GameConstants.BOLD_FONT, GameConstants.TEXT);
-        l.setBounds(x, y, 90, 25);
-        body.add(l);
-        return l;
+    private void setSlidersEnabled(boolean on) {
+        bgmSlider.setEnabled(on);
+        sfxSlider.setEnabled(on);
     }
 
-    private JRadioButton radio(String text, int x, int y) {
+    private JRadioButton addRadio(String text, int x, int y) {
         JRadioButton r = new JRadioButton(text);
         r.setOpaque(false);
         r.setForeground(GameConstants.TEXT);
@@ -459,13 +305,20 @@ class SettingDialog extends BaseDialog {
         return r;
     }
 
-    private JSlider slider(int value, int x, int y) {
-        JSlider s = new JSlider(0, 100, value);
+    // one row = name label + slider + "xx%" label
+    private JSlider addVolumeRow(String name, int value, int y) {
+        addLabel(name, GameConstants.BOLD_FONT, LABEL_X, y, 90, 25);
+        final JLabel valueLabel = addLabel(value + "%", GameConstants.BOLD_FONT, VALUE_X, y, 60, 25);
+
+        final JSlider s = new JSlider(0, 100, value);
         s.setMajorTickSpacing(25);
         s.setPaintTicks(true);
         s.setOpaque(false);
         s.setFocusable(false);
-        s.setBounds(x, y, 210, 45);
+        s.setBounds(SLIDER_X, y - 10, 210, 45);
+        s.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) { valueLabel.setText(s.getValue() + "%"); }
+        });
         body.add(s);
         return s;
     }
@@ -475,102 +328,49 @@ class SettingDialog extends BaseDialog {
 //  LeaderboardDialog : one tab per map, JTable of best scores
 // =====================================================================
 class LeaderboardDialog extends BaseDialog {
+    private static final String[] COLUMNS = {"Rank", "Name", "Waves", "Mobs Killed"};
+    private static final int TABS_W = 680, TABS_H = 290, TABS_Y = 55, ROW_H = 26;
+
     public LeaderboardDialog(Window owner, String selectMap) {
-        super(owner,"LEADERBOARD",800,440);
-        body.setLayout(null);
+        super(owner, "LEADERBOARD", 800, 440);
 
-        // =========================
-        // TABS
-        // =========================
         JTabbedPane tabs = new JTabbedPane();
-
         tabs.setFont(GameConstants.BOLD_FONT);
-        tabs.setBounds(35, 55, body.getWidth() - 60, 290);
+        tabs.setBounds(centerX(TABS_W), TABS_Y, TABS_W, TABS_H);
 
-        // =========================
-        // MAP TABS
-        // =========================
         for (int i = 0; i < MapData.MAPS.length; i++) {
-
             String name = MapData.MAPS[i].getName();
-
-            tabs.addTab(name,buildTab(name));
-
-            if (name.equals(selectMap)) {
-                tabs.setSelectedIndex(i);
-            }
+            tabs.addTab(name, buildTab(name));
+            if (name.equals(selectMap)) tabs.setSelectedIndex(i);
         }
-
-        // วาง tabs บนรูป leaderboard_bg.png
         body.add(tabs);
     }
 
-
-    // =============================================
-    // BUILD EACH MAP TAB
-    // =============================================
-    private JPanel buildTab(String map) {
-
-        JPanel p = new JPanel(new BorderLayout());
-        p.setBackground(GameConstants.PANEL_BG);
-
+    private JComponent buildTab(String map) {
         ArrayList<Leaderboard.Record> list = Leaderboard.getRanking(map);
-
-        // =========================
-        // NO RECORD
-        // =========================
         if (list.isEmpty()) {
-            JLabel none = GameConstants.makeLabel("NO RECORD",GameConstants.HEADER_FONT,Color.LIGHT_GRAY);
+            JLabel none = GameConstants.makeLabel("NO RECORD", GameConstants.HEADER_FONT, Color.GRAY);
             none.setHorizontalAlignment(SwingConstants.CENTER);
-            p.add(none,BorderLayout.CENTER);
-
-            return p;
+            return none;
         }
 
-        // =========================
-        // TABLE DATA
-        // =========================
-        String[] cols = {
-            "Rank",
-            "Name",
-            "Waves",
-            "Mobs Killed"
-        };
-
-        Object[][] data =
-            new Object[list.size()][4];
-
+        Object[][] data = new Object[list.size()][COLUMNS.length];
         for (int i = 0; i < list.size(); i++) {
-            Leaderboard.Record r =list.get(i);
+            Leaderboard.Record r = list.get(i);
             data[i][0] = i + 1;
-            data[i][1] = r.name;
-            data[i][2] = r.waves;
-            data[i][3] = r.mobs;
+            data[i][1] = r.getName();
+            data[i][2] = r.getWaves();
+            data[i][3] = r.getMobs();
         }
 
-        // =========================
-        // TABLE MODEL
-        // =========================
-        DefaultTableModel model = new DefaultTableModel(data, cols) {
-            public boolean isCellEditable(int row,int col) {
-                    return false;
-                }
-            };
-
-        // =========================
-        // TABLE
-        // =========================
+        DefaultTableModel model = new DefaultTableModel(data, COLUMNS) {
+            public boolean isCellEditable(int row, int col) { return false; }
+        };
         JTable table = new JTable(model);
-        table.setRowHeight(26);
+        table.setRowHeight(ROW_H);
         table.setFont(GameConstants.NORMAL_FONT);
         table.getTableHeader().setFont(GameConstants.BOLD_FONT);
         table.getTableHeader().setReorderingAllowed(false);
-
-        // =========================
-        // SCROLL
-        // =========================
-        JScrollPane scroll = new JScrollPane(table);
-        p.add(scroll,BorderLayout.CENTER);
-        return p;
+        return new JScrollPane(table);
     }
 }

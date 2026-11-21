@@ -1,6 +1,7 @@
-// Group members: 6xxxxxxx Firstname Lastname 1, 6xxxxxxx Firstname Lastname 2,
-//                6xxxxxxx Firstname Lastname 3, 6xxxxxxx Firstname Lastname 4,
-//                6xxxxxxx Firstname Lastname 5
+// 6813115 Renuka Choosingkae
+// 6813238 Napat Chonsaktrakul
+// 6813248 Pimpichcha Saengngoen
+// 6813258 Sittichok Boonthittanont
 package JavaProject3_TowerDefense;
 
 import java.util.ArrayList;
@@ -9,13 +10,14 @@ import java.util.ArrayList;
 //  WaveData : mob order of each wave
 // =====================================================================
 public class WaveData {
-    private static final MobType G = MobType.GOBLIN;
-    private static final MobType W = MobType.WOLF;
-    private static final MobType B = MobType.BAT;
+    private static final MobType G  = MobType.GOBLIN;
+    private static final MobType W  = MobType.WOLF;
+    private static final MobType B  = MobType.BAT;
     private static final MobType GO = MobType.GOLEM;
     private static final MobType MB = MobType.MINI_BOSS;
     private static final MobType BS = MobType.BOSS;
 
+    // TYPES[w][i] is spawned COUNTS[w][i] times
     private static final MobType[][] TYPES = {
         {G},
         {G, W},
@@ -42,30 +44,19 @@ public class WaveData {
         {10, 5, 1, 10, 10, 3}
     };
 
+    private WaveData() { }   // only static methods
+
     // wave is 1-based
     public static ArrayList<MobType> buildQueue(int wave) {
         ArrayList<MobType> q = new ArrayList<MobType>();
-
         if (wave < 1 || wave > TYPES.length) return q;
-
-        for (int i = 0; i < TYPES[wave - 1].length; i++) {
-            for (int k = 0; k < COUNTS[wave - 1][i]; k++) {
+        for (int i = 0; i < TYPES[wave - 1].length; i++)
+            for (int k = 0; k < COUNTS[wave - 1][i]; k++)
                 q.add(TYPES[wave - 1][i]);
-            }
-        }
-
         return q;
     }
 
     public static int totalMobs(int wave) {
-        if (wave < 1 || wave > COUNTS.length) return 0;
-
-        int sum = 0;
-
-        for (int i = 0; i < COUNTS[wave - 1].length; i++) {
-            sum += COUNTS[wave - 1][i];
-        }
-
-        return sum;
+        return buildQueue(wave).size();
     }
 }

@@ -1,18 +1,22 @@
-// Group members: 6xxxxxxx Firstname Lastname 1, 6xxxxxxx Firstname Lastname 2,
-//                6xxxxxxx Firstname Lastname 3, 6xxxxxxx Firstname Lastname 4,
-//                6xxxxxxx Firstname Lastname 5
+// 6813115 Renuka Choosingkae
+// 6813238 Napat Chonsaktrakul
+// 6813248 Pimpichcha Saengngoen
+// 6813258 Sittichok Boonthittanont
 package JavaProject3_TowerDefense;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
 // =====================================================================
-//  GetReadyFrame : name (text field), map (combo box + preview),
-//                  song (5 radio buttons), Back / Start
-//  Each section can have a PNG frame; components are placed on top of it.
+//  GetReadyFrame : name (JTextField), map (JComboBox + preview),
+//                  song (5 JRadioButtons), Back / Start
 // =====================================================================
 public class GetReadyFrame extends JFrame {
+    private static final int SONG_PANEL_W = 280, BTN_W = 160, BTN_H = 50;
+    private static final int NAME_COLUMNS = 16, ERROR_W = 230, ERROR_H = 25;
+
     private final MainMenuFrame menu;
     private final boolean specialUnlocked;
     private JTextField nameField;
@@ -40,19 +44,19 @@ public class GetReadyFrame extends JFrame {
 
         updatePreview();
         GameConstants.setupFrame(this, root, menu);
-         SoundManager.playBGM(0);
+        SoundManager.playBGM(SoundManager.getCurrentSong());
     }
 
     // ================= sections =================
     private JPanel buildNamePanel() {
-        JPanel p = section("btn_yellow.png", null);
+        JPanel p = section(null);
         p.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
         p.add(GameConstants.makeLabel("Player Name:", GameConstants.HEADER_FONT, GameConstants.BROWN));
 
-        nameField = new JTextField(16);
+        nameField = new JTextField(NAME_COLUMNS);
         nameField.setFont(GameConstants.HEADER_FONT);
         errorLabel = GameConstants.makeLabel(" ", GameConstants.NORMAL_FONT, GameConstants.RED);
-        errorLabel.setPreferredSize(new Dimension(230, 25));   // fixed width -> layout does not jump
+        errorLabel.setPreferredSize(new Dimension(ERROR_W, ERROR_H));   // fixed width -> layout does not jump
 
         nameField.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
@@ -74,7 +78,7 @@ public class GetReadyFrame extends JFrame {
     }
 
     private JPanel buildMapPanel() {
-        JPanel p = section("frame_map.png", "Select Map");
+        JPanel p = section("Select Map");
         p.setLayout(new BorderLayout(5, 8));
 
         String[] names = new String[MapData.MAPS.length];
@@ -92,7 +96,7 @@ public class GetReadyFrame extends JFrame {
         });
 
         preview = new MapPreviewPanel();
-        mapStatus = GameConstants.makeLabel(" ", GameConstants.BOLD_FONT, GameConstants.TEXT);
+        mapStatus = GameConstants.makeLabel(" ", GameConstants.BOLD_FONT, GameConstants.BROWN);
 
         p.add(mapBox, BorderLayout.NORTH);
         p.add(preview, BorderLayout.CENTER);
@@ -101,19 +105,12 @@ public class GetReadyFrame extends JFrame {
     }
 
     private JPanel buildSongPanel() {
-        JPanel p = section("frame_song.png", "Select Song");
+        JPanel p = section("Select Song");
         p.setLayout(new GridLayout(SoundManager.SONG_NAMES.length, 1, 0, 6));
-        p.setPreferredSize(new Dimension(280, 0));
+        p.setPreferredSize(new Dimension(SONG_PANEL_W, 0));
 
         ButtonGroup group = new ButtonGroup();
         songButtons = new JRadioButton[SoundManager.SONG_NAMES.length];
-        ItemListener songListener = new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() != ItemEvent.SELECTED) return;
-                for (int i = 0; i < songButtons.length; i++)
-                    if (e.getSource() == songButtons[i]) SoundManager.playBGM(i);   // change music immediately
-            }
-        };
         for (int i = 0; i < songButtons.length; i++) {
             songButtons[i] = new JRadioButton(SoundManager.SONG_NAMES[i]);
             songButtons[i].setOpaque(false);
@@ -124,67 +121,67 @@ public class GetReadyFrame extends JFrame {
             p.add(songButtons[i]);
         }
         songButtons[SoundManager.getCurrentSong()].setSelected(true);
+
+        ItemListener songListener = new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() != ItemEvent.SELECTED) return;
+                for (int i = 0; i < songButtons.length; i++)
+                    if (e.getSource() == songButtons[i]) SoundManager.playBGM(i);   // change music immediately
+            }
+        };
         for (JRadioButton rb : songButtons) rb.addItemListener(songListener);
         return p;
     }
 
     private JPanel buildButtonPanel() {
-        JPanel p = new JPanel(new BorderLayout());
-        p.setOpaque(false);
-        JButton backBtn = GameConstants.makeImageButton("btn_yellow.png", "BACK", GameConstants.RED, 160, 50, 18);
-        JButton startBtn = GameConstants.makeImageButton("btn_yellow.png", "START", GameConstants.GREEN, 160, 50, 18);
+        JButton backBtn = GameConstants.makeButton("btn_yellow.png", "BACK", BTN_W, BTN_H);
+        JButton startBtn = GameConstants.makeButton("btn_yellow.png", "START", BTN_W, BTN_H);
         backBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) { goBack(); }
         });
         startBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) { startGame(); }
         });
+
+        JPanel p = new JPanel(new BorderLayout());
+        p.setOpaque(false);
         p.add(backBtn, BorderLayout.WEST);
         p.add(startBtn, BorderLayout.EAST);
         return p;
     }
 
-    // PNG frame if it exists, otherwise a gold titled border
-    private JPanel section(String imageFile, String title) {
-        JPanel p = new ImagePanel(new Color(255, 250, 220, 200));
+    // see-through beige panel, with a brown titled border if title != null
+    private JPanel section(String title) {
+        JPanel p = new ImagePanel(null, GameConstants.SECTION_BG);
         if (title != null) {
-             p.setBorder(
-            BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(GameConstants.BROWN, 2),
-                title,
-                TitledBorder.LEFT,
-                TitledBorder.TOP,
-                GameConstants.BOLD_FONT,
-                GameConstants.BROWN
-            )
-        );
+            p.setBorder(BorderFactory.createTitledBorder(
+                    BorderFactory.createLineBorder(GameConstants.BROWN, 2), title,
+                    TitledBorder.LEFT, TitledBorder.TOP, GameConstants.BOLD_FONT, GameConstants.BROWN));
         }
         return p;
     }
 
     // ================= actions =================
+    private MapData selectedMap() { return MapData.MAPS[mapBox.getSelectedIndex()]; }
+
     private boolean isLocked(MapData m) { return m.isSpecial() && !specialUnlocked; }
 
     private void updatePreview() {
-        MapData m = MapData.MAPS[mapBox.getSelectedIndex()];
-        preview.setMap(m, isLocked(m));
-        if (isLocked(m)) {
-            mapStatus.setForeground(GameConstants.RED);
-            mapStatus.setText("LOCKED - play any basic map first!");
-        } else if (m.isSpecial()) {
-            mapStatus.setForeground(GameConstants.BROWN);
-            mapStatus.setText("Special map - the professors are coming!");
-        } else {
-            mapStatus.setForeground(GameConstants.BROWN);
-            mapStatus.setText("Basic map");
-        }
+        MapData m = selectedMap();
+        boolean locked = isLocked(m);
+        preview.setMap(m, locked);
+        mapStatus.setForeground(locked ? GameConstants.RED : GameConstants.BROWN);
+        if (m.isRandom()) mapStatus.setText("Random map");
+        else if (locked) mapStatus.setText("LOCKED - play any basic map first!");
+        else if (m.isSpecial()) mapStatus.setText("Special map - the professors are coming!");
+        else mapStatus.setText("Basic map");
     }
 
     private void goBack() {
-        SoundManager.playSFX("click");
         menu.setLocation(getLocation());
         dispose();
         menu.setVisible(true);
+        SoundManager.playMenuBGM();
     }
 
     private void startGame() {
@@ -195,19 +192,20 @@ public class GetReadyFrame extends JFrame {
             nameField.requestFocusInWindow();
             return;
         }
-        MapData m = MapData.MAPS[mapBox.getSelectedIndex()];
+        MapData m = selectedMap();
         if (isLocked(m)) {
             errorLabel.setText("This map is locked!");
             SoundManager.playSFX("error");
             return;
         }
+        if (m.isRandom()) m = MapData.getRandomMap(specialUnlocked);
         SoundManager.playSFX("wave");
         new GameFrame(menu, name, m, this);    // opens at the same place, same size
         dispose();
     }
 
     // ================= small panel that draws the chosen map (auto-scaled) =================
-    class MapPreviewPanel extends JPanel {
+    private class MapPreviewPanel extends JPanel {
         private MapData map;
         private boolean locked;
 
@@ -223,16 +221,24 @@ public class GetReadyFrame extends JFrame {
             super.paintComponent(g);
             if (map == null) return;
             Graphics2D g2 = (Graphics2D) g;
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             int cs = Math.max(1, Math.min(getWidth() / GameConstants.COLS, getHeight() / GameConstants.ROWS));
             int w = cs * GameConstants.COLS, h = cs * GameConstants.ROWS;
             int ox = (getWidth() - w) / 2, oy = (getHeight() - h) / 2;
 
             g2.translate(ox, oy);
-            MapDraw.draw(g2, map, cs);
+            if (map.isRandom()) {
+                g2.setColor(GameConstants.SECTION_BG);
+                g2.fillRect(0, 0, w, h);
+                g2.setFont(GameConstants.TITLE_FONT);
+                FontMetrics fm = g2.getFontMetrics();
+                g2.setColor(GameConstants.BROWN);
+                g2.drawString("?", (w - fm.stringWidth("?")) / 2, h / 2 + fm.getAscent() / 2);
+            } else {
+                MapDraw.draw(g2, map, cs);
+            }
             if (locked) {
-                g2.setColor(new Color(0, 0, 0, 170));
+                g2.setColor(GameConstants.OVERLAY);
                 g2.fillRect(0, 0, w, h);
                 g2.setFont(GameConstants.TITLE_FONT);
                 FontMetrics fm = g2.getFontMetrics();
