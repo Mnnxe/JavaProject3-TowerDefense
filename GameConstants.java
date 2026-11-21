@@ -15,7 +15,6 @@ import java.util.HashMap;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import org.w3c.dom.events.MouseEvent;
 
 // =====================================================================
 //  GameConstants : shared values + helper methods (frame, images, buttons, labels)
