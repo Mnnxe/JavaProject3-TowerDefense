@@ -172,7 +172,7 @@ public static Font getFont(String fileName, float size) {
         b.setVerticalTextPosition(SwingConstants.CENTER);
         // สีข้อความ
         b.setForeground(Color.BLACK);
-
+    /*
         // =========================
         // Hover PNG
         // =========================
@@ -186,7 +186,7 @@ public static Font getFont(String fileName, float size) {
         ImageIcon pressed = getIcon(fileName.replace(".png", "_pressed.png"),w, h);
 
         if (pressed != null) {b.setPressedIcon(pressed);}
-
+    */
         // เอาหน้าตา JButton ปกติออก
         b.setBorderPainted(false);
         b.setContentAreaFilled(false);

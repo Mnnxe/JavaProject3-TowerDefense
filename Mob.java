@@ -79,7 +79,10 @@ public class Mob {
     public void draw(Graphics2D g) {
         int r = type.getRadius();
         int cx = (int) x, cy = (int) y;
-        int s = Math.max(32, r * 3);
+        int s; 
+
+        if(special) {s = Math.max(32, r * 4);}
+        else        {s = Math.max(32, r * 3);}
 
         // Basic mobs use 3 walking frames from resources/images/mobs/ (e.g. mobs/goblin_1.png)
         // The frame changes with distance travelled, so the animation stops when the mob stops.

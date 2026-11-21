@@ -10,7 +10,7 @@ public class MainMenuFrame extends JFrame {
     private static final int W = GameConstants.WIN_W, H = GameConstants.WIN_H;
 
     public MainMenuFrame() {
-        super("Tower Defense: Professor Edition");
+        super("Tower Defense: Main Menu");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
