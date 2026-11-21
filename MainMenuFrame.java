@@ -18,7 +18,7 @@ public class MainMenuFrame extends JFrame {
     private static final int BTN_W = 140, BTN_H = 54, BTN_GAP = 10, BTN_X = 100;
 
     public MainMenuFrame() {
-        super("Tower Defense: Professor Edition");
+        super("Tower Defense: Main Menu");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) { openDialog(new ExitDialog(MainMenuFrame.this)); }
