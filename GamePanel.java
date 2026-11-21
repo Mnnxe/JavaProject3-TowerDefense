@@ -412,7 +412,7 @@ public class GamePanel extends JPanel implements Runnable {
         String s = (wave == 0)
                 ? "Build towers, then press SPACE (or Start Wave) to begin Wave 1"
                 : "Wave " + (wave + 1) + " is ready - press SPACE to start";
-        g.setFont(new Font("SansSerif", Font.BOLD, 16));
+        g.setFont(GameConstants.GAME_FONT.deriveFont(Font.PLAIN, 16f));
         FontMetrics fm = g.getFontMetrics();
         int w = fm.stringWidth(s) + 30, x = (MAP_W - w) / 2;
         g.setColor(new Color(0, 0, 0, 150));
@@ -440,7 +440,7 @@ public class GamePanel extends JPanel implements Runnable {
                 "Sell value: " + t.getRefund() + "c"
             };
         }
-        g.setFont(new Font("SansSerif", Font.BOLD, 13));
+        g.setFont(GameConstants.GAME_FONT.deriveFont(Font.PLAIN, 13f));
         FontMetrics fm = g.getFontMetrics();
         int w = 0;
         for (String s : lines) w = Math.max(w, fm.stringWidth(s));

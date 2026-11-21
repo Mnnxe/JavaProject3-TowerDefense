@@ -123,7 +123,7 @@ public class Effect {
     }
 
     private void drawCenteredText(Graphics2D g, int cx, int cy, int size, double a) {
-        g.setFont(GameConstants.HEADER_FONT);
+        g.setFont(GameConstants.GAME_FONT.deriveFont(Font.BOLD, (float) size));
         FontMetrics fm = g.getFontMetrics();
         int tx = cx - fm.stringWidth(text) / 2, ty = cy + fm.getAscent() / 2 - 2;
         g.setColor(fade(Color.BLACK, a));

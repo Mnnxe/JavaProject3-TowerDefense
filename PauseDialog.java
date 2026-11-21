@@ -85,7 +85,7 @@ class EndGameDialog extends BaseDialog {
         body.setLayout(null);
 
         JLabel result = GameConstants.makeImageLabel(victory ? "victory.png" : "defeat.png",
-                victory ? "VICTORY!" : "DEFEAT", GameConstants.HEADER_FONT,
+                victory ? "VICTORY!" : "DEFEAT", GameConstants.TITLE_FONT,
                 victory ? GameConstants.GOLD : GameConstants.RED, 500, 60);
         result.setHorizontalAlignment(SwingConstants.CENTER);
         result.setBounds(0, 12, body.getWidth(), 80);
@@ -121,7 +121,7 @@ class EndGameDialog extends BaseDialog {
                 new LeaderboardDialog(EndGameDialog.this, map).setVisible(true);
             }
         });
-        JButton menuBtn = GameConstants.makeImageButton("btn_yellow", "Main Menu", GameConstants.BLUE, 160, 44, 16);
+        JButton menuBtn = GameConstants.makeImageButton("btn_yellow.png", "Main Menu", GameConstants.BLUE, 160, 44, 16);
         menuBtn.setBounds(startX+bw+gap, 250, bw, bh);
         menuBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) { 
