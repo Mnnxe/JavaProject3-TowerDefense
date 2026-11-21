@@ -479,7 +479,6 @@ class LeaderboardDialog extends BaseDialog {
         super(owner,"LEADERBOARD",800,440);
         body.setLayout(null);
 
-
         // =========================
         // TABS
         // =========================
@@ -541,18 +540,13 @@ class LeaderboardDialog extends BaseDialog {
         Object[][] data =
             new Object[list.size()][4];
 
-
         for (int i = 0; i < list.size(); i++) {
-
-            Leaderboard.Record r =
-                list.get(i);
-
+            Leaderboard.Record r =list.get(i);
             data[i][0] = i + 1;
             data[i][1] = r.name;
             data[i][2] = r.waves;
             data[i][3] = r.mobs;
         }
-
 
         // =========================
         // TABLE MODEL
@@ -562,7 +556,6 @@ class LeaderboardDialog extends BaseDialog {
                     return false;
                 }
             };
-
 
         // =========================
         // TABLE

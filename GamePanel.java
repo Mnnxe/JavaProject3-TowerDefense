@@ -362,7 +362,7 @@ public class GamePanel extends JPanel implements Runnable {
             drawTooltip(g2);
             
             if (paused) {
-                //Dark Overlay
+                //=============Dark Overlay===================
                 g2.setColor(new Color(0, 0, 0, 140));
                 g2.fillRect(0, 0, getWidth(), getHeight());
                 //g2.setFont(GameConstants.TITLE_FONT);

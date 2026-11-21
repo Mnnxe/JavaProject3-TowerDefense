@@ -28,16 +28,26 @@ public class PauseDialog extends BaseDialog {
         setting.setBounds(bx, 150, bw, bh);
         exit.setBounds(bx, 205, bw, bh);
         resume.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { dispose(); }
+            public void actionPerformed(ActionEvent e) { 
+                SoundManager.playSFX("click");    
+                dispose(); 
+            }
         });
         how.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { new HowToPlayDialog(PauseDialog.this).setVisible(true); }
+            public void actionPerformed(ActionEvent e) { 
+                SoundManager.playSFX("click");
+                new HowToPlayDialog(PauseDialog.this).setVisible(true); 
+            }
         });
         setting.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { new SettingDialog(PauseDialog.this).setVisible(true); }
+            public void actionPerformed(ActionEvent e) { 
+                SoundManager.playSFX("click");
+                new SettingDialog(PauseDialog.this).setVisible(true); 
+        }
         });
         exit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                SoundManager.playSFX("click");
                 onClose();
                 game.exitToMenu();
             }
@@ -103,17 +113,21 @@ class EndGameDialog extends BaseDialog {
         int startX = (body.getWidth() - totalW) / 2;
 
 
-        JButton boardBtn = GameConstants.makeImageButton("btn_leaderboard.png", "Leaderboard", GameConstants.ORANGE, 160, 44, 16);
+        JButton boardBtn = GameConstants.makeImageButton("btn_yellow.png", "Leaderboard", GameConstants.ORANGE, 160, 44, 16);
         boardBtn.setBounds(startX, 250, bw, bh);
         boardBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                SoundManager.playSFX("click");
                 new LeaderboardDialog(EndGameDialog.this, map).setVisible(true);
             }
         });
-        JButton menuBtn = GameConstants.makeImageButton("btn_menu.png", "Main Menu", GameConstants.BLUE, 160, 44, 16);
+        JButton menuBtn = GameConstants.makeImageButton("btn_yellow", "Main Menu", GameConstants.BLUE, 160, 44, 16);
         menuBtn.setBounds(startX+bw+gap, 250, bw, bh);
         menuBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { dispose(); }
+            public void actionPerformed(ActionEvent e) { 
+                SoundManager.playSFX("click");
+                dispose(); 
+            }
         });
         body.add(boardBtn);
         body.add(menuBtn);

@@ -93,7 +93,10 @@ public class GameFrame extends JFrame {
 
         pauseButton = GameConstants.makeImageButton("btn_pause.png", "", GameConstants.BLUE, 45, 45, 13);
         pauseButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { openPause(); }
+            public void actionPerformed(ActionEvent e) { 
+                SoundManager.playSFX("click");
+                openPause(); 
+            }
         });
         right.add(pauseButton);
 
@@ -303,8 +306,10 @@ public class GameFrame extends JFrame {
         gamePanel.stopGameLoop();
         saveRecord();
         menu.setLocation(getLocation());     // menu appears at the same place
+        SoundManager.stopBGM();
         dispose();
         menu.setVisible(true);
+        SoundManager.playMenuBGM();
     }
 
     private void saveRecord() {

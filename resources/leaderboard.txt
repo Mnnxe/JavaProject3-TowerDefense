@@ -1,3 +1,7 @@
 Desert;minnie;5;67
 Lab 6273;mn;5;67
 Lab 6273;หกดหฟด;0;4
+Desert;sfx test;2;6
+Forest;fsfsaf;1;2
+Forest;dsdsaf;2;0
+Lab 6273;asfsf;2;0

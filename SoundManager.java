@@ -124,6 +124,8 @@ public class SoundManager {
             clip.start();
         } catch (Exception e) {
             // no audio device -> ignore
+            System.out.println("SFX error [" + name + "]: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -154,6 +156,7 @@ public class SoundManager {
             gain.setValue(db);
         } catch (Exception e) { /* control not supported */ }
     }
+
 
     // ================= tone generation (fallback when .wav is missing) =================
     private static byte[] makeMelody(int index) {
@@ -210,4 +213,5 @@ public class SoundManager {
         }
         return buf;
     }
+    
 }
