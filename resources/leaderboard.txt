@@ -11,3 +11,8 @@ Forest;AFFSADF;2;0
 Forest;DFASSFAS;2;0
 Forest;หกเกเกห;2;0
 Lab 6273;sfasf;0;0
+Forest;sfasfa;0;0
+Desert;asfsfa;1;0
+Forest;fasfa;0;0
+Forest;หฟหดหฟดด;0;0
+Forest;หดฟหด;0;0

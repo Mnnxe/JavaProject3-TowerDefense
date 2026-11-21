@@ -84,13 +84,16 @@ public class GameFrame extends JFrame {
 
         JButton pauseButton = GameConstants.makeIconButton("btn_pause.png", "II", PAUSE_SIZE);
         pauseButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { openPause(); }
+            public void actionPerformed(ActionEvent e) {
+                //SoundManager.playSFX("click"); 
+                openPause(); 
+            }
         });
         JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 3));
         right.setOpaque(false);
         right.add(pauseButton);
 
-        JPanel hud = new ImagePanel("hud_bg.png", GameConstants.PANEL_BG);
+        JPanel hud = new ImagePanel("", GameConstants.PANEL_BG);
         hud.setLayout(new BorderLayout());
         hud.add(left, BorderLayout.WEST);
         hud.add(right, BorderLayout.EAST);

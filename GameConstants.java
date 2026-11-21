@@ -12,6 +12,10 @@ import java.io.File;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import org.w3c.dom.events.MouseEvent;
 
 // =====================================================================
 //  GameConstants : shared values + helper methods (frame, images, buttons, labels)
@@ -19,7 +23,9 @@ import javax.swing.*;
 public class GameConstants {
 
     public static final String PROJECT_FOLDER   = "JavaProject3_TowerDefense";
-    public static final String PATH             = "src/main/java/" + PROJECT_FOLDER + "/resources/";
+    //public static final String PATH             = "src/main/java/" + PROJECT_FOLDER + "/resources/";
+    public static final String PATH             = "resources/";
+
     public static final String IMG_PATH         = PATH + "images/";
     public static final String AUDIO_PATH       = PATH + "audio/";
     public static final String FONT_FILE        = PATH + "LcdSolid-VPzB.ttf";
@@ -74,10 +80,6 @@ public class GameConstants {
     private static final HashMap<String, BufferedImage> imageCache = new HashMap<String, BufferedImage>();
 
     // every button plays a click sound
-    private static final ActionListener CLICK_SOUND = new ActionListener() {
-        public void actionPerformed(ActionEvent e) { SoundManager.playSFX("click"); }
-    };
-
     private GameConstants() { }   // only static members
 
     private static Font loadGameFont() {
@@ -184,7 +186,13 @@ public class GameConstants {
         b.setFocusable(false);              // keep keyboard focus on the game panel
         b.setCursor(new Cursor(Cursor.HAND_CURSOR));
         b.setPreferredSize(new Dimension(w, h));
-        b.addActionListener(CLICK_SOUND);
+        //b.addActionListener(CLICK_SOUND);
+
+        b.addMouseListener(new MouseAdapter() {
+        public void mousePressed(MouseEvent e) {
+            SoundManager.playSFX("click");
+            }
+         });
     }
 
     // ================= labels =================
