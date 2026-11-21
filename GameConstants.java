@@ -8,12 +8,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import org.w3c.dom.events.MouseEvent;
 
@@ -80,6 +80,11 @@ public class GameConstants {
     private static final HashMap<String, BufferedImage> imageCache = new HashMap<String, BufferedImage>();
 
     // every button plays a click sound
+    public static final MouseAdapter CLICK_SOUND = new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                SoundManager.playSFX("click");
+            }
+    };
     private GameConstants() { }   // only static members
 
     private static Font loadGameFont() {
@@ -167,10 +172,10 @@ public class GameConstants {
         ImageIcon icon = getIcon(imageFile, w, h);
         if (icon != null) {
             b.setIcon(icon);
-            ImageIcon hover = getIcon(imageFile.replace(".png", "_hover.png"), w, h);
+            /*ImageIcon hover = getIcon(imageFile.replace(".png", "_hover.png"), w, h);
             ImageIcon pressed = getIcon(imageFile.replace(".png", "_pressed.png"), w, h);
             if (hover != null) b.setRolloverIcon(hover);
-            if (pressed != null) b.setPressedIcon(pressed);
+            if (pressed != null) b.setPressedIcon(pressed);*/
             b.setHorizontalTextPosition(SwingConstants.CENTER);
             b.setVerticalTextPosition(SwingConstants.CENTER);
             b.setForeground(TEXT);
@@ -186,13 +191,7 @@ public class GameConstants {
         b.setFocusable(false);              // keep keyboard focus on the game panel
         b.setCursor(new Cursor(Cursor.HAND_CURSOR));
         b.setPreferredSize(new Dimension(w, h));
-        //b.addActionListener(CLICK_SOUND);
-
-        b.addMouseListener(new MouseAdapter() {
-        public void mousePressed(MouseEvent e) {
-            SoundManager.playSFX("click");
-            }
-         });
+        b.addMouseListener(CLICK_SOUND);
     }
 
     // ================= labels =================

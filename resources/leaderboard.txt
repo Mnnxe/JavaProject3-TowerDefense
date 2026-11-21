@@ -16,3 +16,11 @@ Desert;asfsfa;1;0
 Forest;fasfa;0;0
 Forest;หฟหดหฟดด;0;0
 Forest;หดฟหด;0;0
+Forest;dsafasdfdsd;0;0
+Lab 6273;sfa;10;252
+Lab 6273;asdfsfa;3;38
+Lab 6273;safsfaf;3;37
+Lab 6273;ฟหด;6;118
+Lab 6273;กเหเ;9;254
+Lab 6273;กฟหดห;9;256
+Forest;assfsa;2;5

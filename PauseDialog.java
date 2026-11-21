@@ -65,9 +65,10 @@ class EndGameDialog extends BaseDialog {
         super(game, victory ? "Victory" : "Defeat", 500, 380);
         hideTitle();
 
-        JLabel result = GameConstants.makeImageLabel(victory ? "victory.png" : "defeat.png",
-                victory ? "VICTORY!" : "DEFEAT", GameConstants.TITLE_FONT,
-                victory ? GameConstants.GOLD : GameConstants.RED, body.getWidth(), RESULT_H);
+        JLabel result = GameConstants.makeLabel(
+                        victory ? "VICTORY!" : "DEFEAT",GameConstants.TITLE_FONT,
+                        victory ? GameConstants.GOLD : GameConstants.RED
+        );
         result.setHorizontalAlignment(SwingConstants.CENTER);
         result.setBounds(0, RESULT_Y, body.getWidth(), RESULT_H);
         body.add(result);

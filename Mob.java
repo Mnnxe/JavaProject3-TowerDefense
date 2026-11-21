@@ -92,13 +92,20 @@ public class Mob {
     public void draw(Graphics2D g) {
         int r = type.getRadius();
         int cx = (int) x, cy = (int) y;
-        int s = Math.max(MIN_SIZE, r * 3);
+        int s, lift;
+        if(map.isSpecial()) {
+            s = Math.max(MIN_SIZE, r * 4);
+            lift = IMAGE_LIFT + 20;
+        }else{
+            s = Math.max(MIN_SIZE, r * 3);
+            lift = IMAGE_LIFT;
+        }
 
         // 3 walking frames, e.g. goblin1.png, goblin2.png, goblin3.png
         int frame = ((int) (distance / FRAME_DISTANCE) % WALK_FRAMES) + 1;
         BufferedImage img = GameConstants.getImage(type.getImagePrefix(map.isSpecial()) + frame + ".png");
         if (img != null) {
-            g.drawImage(img, cx - s / 2, cy - s / 2 - IMAGE_LIFT, s, s, null);
+            g.drawImage(img, cx - s / 2, cy - s / 2 - lift, s, s, null);
         } else {
             g.setColor(Color.BLACK);                       // simple fallback
             g.fillOval(cx - r, cy - r, 2 * r, 2 * r);
@@ -107,7 +114,7 @@ public class Mob {
         if (slowTimer > 0) drawStatus(g, "frost.png", FROST_COLOR, FROST_ALPHA, cx, cy, s);
         if (burnTimer > 0) drawStatus(g, "burn.png", BURN_COLOR, BURN_ALPHA, cx, cy, s);
         drawHpBar(g, cx, cy, r);
-        if (map.isSpecial() || type.isBoss()) drawName(g, cx, cy, r);
+        if (map.isSpecial() || type.isBoss()) drawName(g, cx, cy-25, r);
     }
 
     // frost / burn picture on top of the mob, or a see-through coloured circle

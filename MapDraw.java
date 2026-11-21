@@ -14,7 +14,7 @@ import java.awt.image.BufferedImage;
 // =====================================================================
 public class MapDraw {
     private static final int COLS = GameConstants.COLS, ROWS = GameConstants.ROWS;
-    private static final String[] THEME_KEYS = {"forest", "desert", "snow", "egco", "lab"};
+    private static final String[] THEME_KEYS = {"forest", "desert", "snow", "lab"};
 
     // fallback colours (same order as THEME_KEYS)
     private static final Color[] GROUND = {

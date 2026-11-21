@@ -42,7 +42,7 @@ public class GameFrame extends JFrame {
         });
 
         gamePanel = new GamePanel(this, map);
-        JPanel mapArea = new ImagePanel("game_bg.png", GameConstants.PANEL_BG);
+        JPanel mapArea = new ImagePanel(null, GameConstants.PANEL_BG);
         mapArea.setLayout(new GridBagLayout());          // keeps the map in the middle
         mapArea.add(gamePanel);
 
@@ -73,10 +73,10 @@ public class GameFrame extends JFrame {
         hpBar.setPreferredSize(new Dimension(HP_BAR_W, HP_BAR_H));
         left.add(hpBar);
 
-        waveLabel = GameConstants.makeIconLabel(" ", "icon_wave.png", f, c);
+        waveLabel = GameConstants.makeIconLabel(" ", null, f, c);
         mobsLabel = GameConstants.makeLabel(" ", f, c);
-        killLabel = GameConstants.makeIconLabel(" ", "icon_kill.png", f, c);
-        coinLabel = GameConstants.makeIconLabel(" ", "icon_coin.png", f, GameConstants.GOLD);
+        killLabel = GameConstants.makeIconLabel(" ", null, f, c);
+        coinLabel = GameConstants.makeIconLabel(" ", null, f, GameConstants.GOLD);
         left.add(waveLabel);
         left.add(mobsLabel);
         left.add(killLabel);
@@ -84,16 +84,13 @@ public class GameFrame extends JFrame {
 
         JButton pauseButton = GameConstants.makeIconButton("btn_pause.png", "II", PAUSE_SIZE);
         pauseButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                //SoundManager.playSFX("click"); 
-                openPause(); 
-            }
+            public void actionPerformed(ActionEvent e) {openPause();}
         });
         JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 3));
         right.setOpaque(false);
         right.add(pauseButton);
 
-        JPanel hud = new ImagePanel("", GameConstants.PANEL_BG);
+        JPanel hud = new ImagePanel(null, GameConstants.PANEL_BG);
         hud.setLayout(new BorderLayout());
         hud.add(left, BorderLayout.WEST);
         hud.add(right, BorderLayout.EAST);
@@ -176,7 +173,7 @@ public class GameFrame extends JFrame {
                 GameConstants.NORMAL_FONT, GameConstants.BEIGE);
         infoLabel.setBorder(BorderFactory.createEmptyBorder(6, 4, 0, 0));
 
-        JPanel bar = new ImagePanel("bottom_bg.png", GameConstants.PANEL_BG);
+        JPanel bar = new ImagePanel(null, GameConstants.PANEL_BG);
         bar.setLayout(new BorderLayout());
         bar.setBorder(BorderFactory.createEmptyBorder(6, 8, 6, 8));
         bar.add(left, BorderLayout.WEST);
