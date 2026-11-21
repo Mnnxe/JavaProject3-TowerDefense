@@ -23,8 +23,8 @@ import org.w3c.dom.events.MouseEvent;
 public class GameConstants {
 
     public static final String PROJECT_FOLDER   = "JavaProject3_TowerDefense";
-    //public static final String PATH             = "src/main/java/" + PROJECT_FOLDER + "/resources/";
-    public static final String PATH             = "resources/";
+    public static final String PATH             = "src/main/java/" + PROJECT_FOLDER + "/resources/";
+    //public static final String PATH             = "resources/";
 
     public static final String IMG_PATH         = PATH + "images/";
     public static final String AUDIO_PATH       = PATH + "audio/";
