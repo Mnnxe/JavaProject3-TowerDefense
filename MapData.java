@@ -15,7 +15,7 @@ public class MapData {
     private static final Random RANDOM = new Random();
 
     // themes (index of the picture / colour in MapDraw)
-    public static final int FOREST = 0, DESERT = 1, SNOW = 2, LAB = 4;
+    public static final int FOREST = 0, DESERT = 1, SNOW = 2, LAB = 3;
 
     private static final MapData FOREST_MAP = new MapData("Forest", false, FOREST, new int[][]{{0,2},{5,2},{5,8},{11,8},{11,2},{17,2},{17,6},{21,6}});
     private static final MapData DESERT_MAP = new MapData("Desert", false, DESERT, new int[][]{{0,8},{4,8},{4,1},{10,1},{10,7},{16,7},{16,4},{21,4}});
