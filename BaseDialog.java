@@ -338,10 +338,14 @@ class LeaderboardDialog extends BaseDialog {
         tabs.setFont(GameConstants.BOLD_FONT);
         tabs.setBounds(centerX(TABS_W), TABS_Y, TABS_W, TABS_H);
 
-        for (int i = 0; i < MapData.MAPS.length; i++) {
-            String name = MapData.MAPS[i].getName();
-            tabs.addTab(name, buildTab(name));
-            if (name.equals(selectMap)) tabs.setSelectedIndex(i);
+        for (MapData m : MapData.MAPS) {
+        if (m.isRandom()) continue;
+
+        String name = m.getName();
+        tabs.addTab(name, buildTab(name));
+
+        if (name.equals(selectMap))
+            tabs.setSelectedIndex(tabs.getTabCount() - 1);
         }
         body.add(tabs);
     }
