@@ -73,10 +73,10 @@ public class GameFrame extends JFrame {
         hpBar.setPreferredSize(new Dimension(HP_BAR_W, HP_BAR_H));
         left.add(hpBar);
 
-        waveLabel = GameConstants.makeIconLabel(" ", null, f, c);
+        waveLabel = GameConstants.makeLabel(" ", f, c);
         mobsLabel = GameConstants.makeLabel(" ", f, c);
-        killLabel = GameConstants.makeIconLabel(" ", null, f, c);
-        coinLabel = GameConstants.makeIconLabel(" ", null, f, GameConstants.GOLD);
+        killLabel = GameConstants.makeLabel(" ", f, c);
+        coinLabel = GameConstants.makeLabel(" ", f, GameConstants.GOLD);
         left.add(waveLabel);
         left.add(mobsLabel);
         left.add(killLabel);

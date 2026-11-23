@@ -22,8 +22,8 @@ import javax.swing.*;
 public class GameConstants {
 
     public static final String PROJECT_FOLDER   = "JavaProject3_TowerDefense";
-    public static final String PATH             = "src/main/java/" + PROJECT_FOLDER + "/resources/";
-    //public static final String PATH             = "resources/";
+    //public static final String PATH             = "src/main/java/" + PROJECT_FOLDER + "/resources/";
+    public static final String PATH             = "resources/";
 
     public static final String IMG_PATH         = PATH + "images/";
     public static final String AUDIO_PATH       = PATH + "audio/";
@@ -202,11 +202,11 @@ public class GameConstants {
     }
 
     // text label with a small icon in front (icon only if the PNG exists)
-    public static JLabel makeIconLabel(String text, String iconFile, Font font, Color color) {
+    /*public static JLabel makeIconLabel(String text, String iconFile, Font font, Color color) {
         JLabel l = makeLabel(text, font, color);
         l.setIcon(getIcon(iconFile, LABEL_ICON_SIZE, LABEL_ICON_SIZE));
         return l;
-    }
+    }*/
 
     // picture label, or text label if the PNG is missing
     public static JLabel makeImageLabel(String fileName, String text, Font font, Color color, int w, int h) {
